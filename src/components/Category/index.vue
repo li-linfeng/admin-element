@@ -1,11 +1,11 @@
 <template>
-<!-- @click="() => append(data)"> -->
   <div class="custom-tree-container">
+     <!-- default-expand-all -->
     <el-tree
       :data="data"
       show-checkbox
       node-key="id"
-      default-expand-all
+     
       :expand-on-click-node="false">
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
@@ -13,28 +13,29 @@
           <el-button
             type="text"
             size="mini"
-            @click="dialogFormVisible = true">
+            @click="() => add(data)">
             新增
           </el-button>
           <el-button
+            v-if=" node.data.id  >0"
             type="text"
             size="mini"
-            @click="() => remove(node, data)">
+            @click="() => remove(node)">
             删除
           </el-button>
         </span>
       </span>
     </el-tree>
 
-    
-    <el-dialog title="添加分类" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm"  :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="分类名称">
-          <el-input v-model="temp.label" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="请输入分类名称" />
+    <!-- 添加分类 -->
+    <el-dialog title="添加分类"  :visible.sync="dialogFormVisible">
+      <el-form ref="temp" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="名称" prop="label">
+          <el-input v-model="temp.label" :autosize="{ minRows: 2, maxRows: 4}"  placeholder="请输入分类名称" />
         </el-form-item>
-        <el-form-item label="是否拥有子分类">
+        <el-form-item label="是否有子分类"  prop="has_child">
            <el-radio v-model="temp.has_child" label="1">是</el-radio>
-           <el-radio v-model="temp.has_child" label="0">否</el-radio>
+           <el-radio v-model="temp.has_child" label="0" checked="checked">否</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -46,62 +47,106 @@
         </el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { getCategoryTreeList , addCategory} from '@/api/category'
+import { getCategoryTreeList , addCategory, deleteCategory} from '@/api/category'
 
 export default {
   data() {
-    const data = [];
+    const data = [
+       {
+        "label" : "全部",
+        "children": [],
+        "has_child" : 1,
+        "parent_id" :0,
+        "id" :0,
+       },
+    ];
     return {
-      data: JSON.parse(JSON.stringify(data)),
+      data: data,
       dialogFormVisible: false,
+      node: null,
       temp:{
         id:0,
         label: "",
-        has_child: 0,
+        has_child: '0',
         parent_id: 0,
         children :[],
       },
+      rules:{
+        label:[{ required: true, message: '请输入分类名称', trigger: 'blur' },],
+        has_child:[{required: true, message: '请选择是否有子分类', trigger: 'change' },]
+      }
     }
   },
   created() {
-    this.getList()
+    this.getList() 
   },
   methods: {
-    append(temp) {
-
-      temp.parent_id = this.data[0].id
-      console.log(this.data[0].id, temp.parent_id)
-      addCategory(temp).then(response => {
-          console.log(this.data)
-        this.data.children.push(response.data);
-      })
+    add(data){
+       this.dialogFormVisible = true
+       this.node = data
     },
-    remove(node, data) {
-      alert(123)
-    //   const parent = node.parent;
-    //   const children = parent.data.children || parent.data;
-    //   const index = children.findIndex(d => d.id === data.id);
-    //   children.splice(index, 1);
+    append(temp) {
+      this.$refs['temp'].validate((valid) => {
+          if (valid) {
+            temp.parent_id = this.node ?this.node.id :0
+            var  child = this.node ? this.node.has_child : 1
+            if(child == 0 ){
+              this.$message({
+                type: 'error',
+                message: `此节点不允许添加子分类`
+              });
+              return true;
+            }
+            addCategory(temp).then(response => {
+              this.getList().then(res=>{
+                  this.dialogFormVisible = false;
+              }) 
+            })
+          } else {
+            return false;
+          }
+        });
+     
+    },
+    remove(node) {
+      if (node.data.children_count >0) {
+          this.$alert('此分类具有子分类，确认删除吗', '删除分类', {
+          confirmButtonText: '确定',
+          callback: action => {
+            if (action != "cancel") {
+              this.delCate(node.data.id)
+            }    
+          }
+        });
+      }else{
+          this.delCate(node.data.id)
+      }
+      
     },
     getList() {
-      getCategoryTreeList().then(response => {
-        this.data = response.tree
+      return getCategoryTreeList().then(response => {
+        if (response.tree.length > 0){
+           this.data[0].children.push(response.tree[0])
+        }else{
+          this.data[0].children = []
+        }
       })
     },
-    renderContent(h, { node, data, store }) {
-      return (
-        <span class='custom-tree-node'>
-          <span>{node.label}</span>
-          <span>
-            <el-button size="mini" type="text" on-click={ () => this.append(data) }>Append</el-button>
-            <el-button size="mini" type="text" on-click={ () => this.remove(node, data) }>Delete</el-button>
-          </span>
-        </span>);
-    }
+    delCate(id) {
+      deleteCategory(id).then(response => {
+        this.getList().then(res=>{
+          this.$message({
+            type: 'info',
+            message: `删除成功`
+          });
+        })
+      })   
+    },
   }
 }
 </script>
