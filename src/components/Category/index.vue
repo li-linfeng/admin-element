@@ -130,8 +130,8 @@ export default {
     },
     getList() {
       return getCategoryTreeList().then(response => {
-        if (response.tree.length > 0){
-           this.data[0].children.push(response.tree[0])
+        if (response.data.length > 0){
+           this.data[0].children.push(response.data[0])
         }else{
           this.data[0].children = []
         }

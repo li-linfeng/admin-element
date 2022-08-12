@@ -28,9 +28,9 @@ export default {
       type: Number,
       default: 1
     },
-    limit: {
+    per_page: {
       type: Number,
-      default: 20
+      default: 10
     },
     pageSizes: {
       type: Array,
@@ -66,22 +66,22 @@ export default {
     },
     pageSize: {
       get() {
-        return this.limit
+        return this.per_page
       },
       set(val) {
-        this.$emit('update:limit', val)
+        this.$emit('update:per_page', val)
       }
     }
   },
   methods: {
     handleSizeChange(val) {
-      this.$emit('pagination', { page: this.currentPage, limit: val })
+      this.$emit('pagination', { page: this.currentPage, per_page: val })
       if (this.autoScroll) {
         scrollTo(0, 800)
       }
     },
     handleCurrentChange(val) {
-      this.$emit('pagination', { page: val, limit: this.pageSize })
+      this.$emit('pagination', { page: val, per_page: this.pageSize })
       if (this.autoScroll) {
         scrollTo(0, 800)
       }
