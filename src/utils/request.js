@@ -43,15 +43,7 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    const res = response.data
-    if (res.status_code !== 200) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-    }
-    return res
+    return response.data
   },
   error => {
     var ms = error.message
@@ -61,7 +53,9 @@ service.interceptors.response.use(
         break;
       case 403 :
         ms = "没有权限"
-        break;    
+        break;  
+      default:
+        console.log(error.response)    
     }
     Message({
       message: ms,

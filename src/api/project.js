@@ -17,10 +17,11 @@ export function addProject(data) {
 }
 
 
-export function updateProjectsStatus(id) {
+export function updateProjectsStatus(id, data) {
   return request({
     url: `/api/projects/${id}/status`,
     method: 'patch',
+    data
   })
 }
 

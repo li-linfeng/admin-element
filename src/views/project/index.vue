@@ -51,7 +51,7 @@
     </el-table-column>
     <el-table-column label="创建时间" width="300" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.created_at}} {{row.status =='continue'}}</span>
+          <span>{{ row.created_at}}</span>
         </template>
       </el-table-column>
     <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -151,7 +151,7 @@ export default {
       dialogFormVisible: false,
       rules: {
         name: [{ required: true, message: '请填写名称', trigger: 'change' }],
-        description: [{ type: 'date', required: true, message: '请填写描述', trigger: 'blur' }],
+        description: [{ required: true, message: '请填写描述', trigger: 'blur' }],
       },
     }
   },
@@ -174,12 +174,14 @@ export default {
       this.getList()
     },
     handleModifyStatus(row, status) {
-     updateProjectsStatus(row.id)
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
+     var data ={"status":status}
+     updateProjectsStatus(row.id,data).then(res =>{
+        this.$message({
+          message: '操作Success',
+          type: 'success'
+        })
+        row.status = status
+     })  
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -199,7 +201,14 @@ export default {
       })
     },
     deleteData(row){
-
+      deleteProjects(row.id).then(res=>{
+        this.$notify({
+                    title: 'Success',
+                    message: '删除成功',
+                    type: 'success',
+                    duration: 2000
+        })
+      })
     }
   }
 }
