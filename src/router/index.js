@@ -79,6 +79,18 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/sale_request',
+    component: Layout,
+    children: [
+      {
+        path: 'saleRequest',
+        component: () => import('@/views/saleRequest/saleRequest'),
+        name: 'SaleRequest',
+        meta: { title: '销售需求', icon: 'form' }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
