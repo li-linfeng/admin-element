@@ -38,3 +38,10 @@ export function deleteSaleRequest(id) {
     method: 'delete'
   })
 }
+
+export function getSaleRequestNum(){
+  return request({
+    url: `/api/sale_request_num`,
+    method: 'get'
+  })
+}
