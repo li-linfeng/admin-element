@@ -61,9 +61,8 @@ export const constantRoutes = [
       {
         path: 'category',
         component: () => import('@/views/category/category'),
-        // component: () => import('@/views/category/index'),
         name: 'Category',
-        meta: { title: '分类', icon: 'form' }
+        meta: { title: '分类', icon: 'el-icon-collection' }
       }
     ]
   },
@@ -75,7 +74,7 @@ export const constantRoutes = [
         path: 'project',
         component: () => import('@/views/project/index'),
         name: 'Project',
-        meta: { title: '项目', icon: 'form' }
+        meta: { title: '项目', icon: 'el-icon-reading' }
       }
     ]
   },
@@ -87,7 +86,31 @@ export const constantRoutes = [
         path: 'saleRequest',
         component: () => import('@/views/saleRequest/saleRequest'),
         name: 'SaleRequest',
-        meta: { title: '销售需求', icon: 'form' }
+        meta: { title: '销售需求', icon: 'el-icon-paperclip' }
+      }
+    ]
+  },
+  {
+    path: '/pre_sale',
+    component: Layout,
+    children: [
+      {
+        path: 'preSale',
+        component: () => import('@/views/preSale/preSale'),
+        name: 'PreSale',
+        meta: { title: '工程售前', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/order',
+    component: Layout,
+    children: [
+      {
+        path: 'order',
+        component: () => import('@/views/order/order'),
+        name: 'Order',
+        meta: { title: '订单', icon: 'el-icon-money' }
       }
     ]
   },

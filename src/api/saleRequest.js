@@ -45,3 +45,12 @@ export function getSaleRequestNum(){
     method: 'get'
   })
 }
+
+
+export function dispatchHandler(id, data){
+  return request({
+    url: `/api/sale_requests/${id}/handle_user`,
+    method: 'post',
+    data
+  })
+}
