@@ -1,4 +1,4 @@
-import router from './router'
+import router, { constantRoutes } from './router'
 import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
@@ -19,7 +19,10 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-
+  alert(123)
+  
+  console.log(123)
+  console.log(123)
   if (hasToken) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
@@ -27,18 +30,21 @@ router.beforeEach(async(to, from, next) => {
       NProgress.done()
     } else {
       const hasGetUserInfo = store.getters.name
+      console.log(hasGetUserInfo)
       if (hasGetUserInfo) {
         next()
       } else {
         try {
-          // get user info
-          await store.dispatch('user/getInfo')
-
-          next()
+          const { roles } =  await store.dispatch('user/getInfo')
+          const accessRoutes = await store.dispatch('permission/generateRoutes',roles)
+          // 调用router.addRoutes方法,将异步路由添加进去 
+          router.options.routers = constantRoutes.concat(accessRoutes)
+          router.addRoutes(accessRoutes)
+          next({ ...to, replace: true })
         } catch (error) {
-          // remove token and go to login page to re-login
+         // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
+          Message.error(error.Message || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
@@ -46,7 +52,6 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     /* has no token*/
-
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()

@@ -388,7 +388,6 @@ export default {
     },
     addOrder(){
       this.$refs['orderForm'].validate((valid) => {
-        console.log(valid, this.order)
         if (valid) {
             let ids = []
             for (let i=0; i< this.orderList.length; i++){

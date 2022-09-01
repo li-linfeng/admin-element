@@ -30,19 +30,102 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
+
+
+
+
+
+// {
+//   path: '/category',
+//   component: Layout,
+//   children: [
+//     {
+//       path: 'category',
+//       component: () => import('@/views/category/category'),
+//       name: 'Category',
+//       meta: { title: '分类', icon: 'el-icon-collection' }
+//     }
+//   ]
+// },
+// {
+//   path: '/project',
+//   component: Layout,
+//   children: [
+//     {
+//       path: 'project',
+//       component: () => import('@/views/project/index'),
+//       name: 'Project',
+//       meta: { title: '项目', icon: 'el-icon-reading' }
+//     }
+//   ]
+// },
+// {
+//   path: '/sale_request',
+//   component: Layout,
+//   children: [
+//     {
+//       path: 'saleRequest',
+//       component: () => import('@/views/saleRequest/saleRequest'),
+//       name: 'SaleRequest',
+//       meta: { title: '销售需求', icon: 'el-icon-paperclip' }
+//     }
+//   ]
+// },
+// {
+//   path: '/pre_sale',
+//   component: Layout,
+//   children: [
+//     {
+//       path: 'preSale',
+//       component: () => import('@/views/preSale/preSale'),
+//       name: 'PreSale',
+//       meta: { title: '工程售前', icon: 'form' }
+//     }
+//   ]
+// },
+// {
+//   path: '/order',
+//   component: Layout,
+//   children: [
+//     {
+//       path: 'order',
+//       component: () => import('@/views/order/order'),
+//       name: 'Order',
+//       meta: { title: '订单', icon: 'el-icon-money' }
+//     }
+//   ]
+// },
+// {
+//   path: '/role',
+//   component: Layout,
+//   children: [
+//     {
+//       path: 'role',
+//       component: () => import('@/views/role/role'),
+//       name: 'Role',
+//       meta: { title: '角色', icon: 'el-icon-money' }
+//     }
+//   ]
+// },
+// {
+//   path: '/user',
+//   component: Layout,
+//   children: [
+//     {
+//       path: 'user',
+//       component: () => import('@/views/user/user'),
+//       name: 'User',
+//       meta: { title: '用户', icon: 'el-icon-money' }
+//     }
+//   ]
+// },
+
 export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  },
-
   {
     path: '/',
     component: Layout,
@@ -54,72 +137,22 @@ export const constantRoutes = [
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
   },
+
   {
-    path: '/category',
-    component: Layout,
-    children: [
-      {
-        path: 'category',
-        component: () => import('@/views/category/category'),
-        name: 'Category',
-        meta: { title: '分类', icon: 'el-icon-collection' }
-      }
-    ]
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
   },
-  {
-    path: '/project',
-    component: Layout,
-    children: [
-      {
-        path: 'project',
-        component: () => import('@/views/project/index'),
-        name: 'Project',
-        meta: { title: '项目', icon: 'el-icon-reading' }
-      }
-    ]
-  },
-  {
-    path: '/sale_request',
-    component: Layout,
-    children: [
-      {
-        path: 'saleRequest',
-        component: () => import('@/views/saleRequest/saleRequest'),
-        name: 'SaleRequest',
-        meta: { title: '销售需求', icon: 'el-icon-paperclip' }
-      }
-    ]
-  },
-  {
-    path: '/pre_sale',
-    component: Layout,
-    children: [
-      {
-        path: 'preSale',
-        component: () => import('@/views/preSale/preSale'),
-        name: 'PreSale',
-        meta: { title: '工程售前', icon: 'form' }
-      }
-    ]
-  },
-  {
-    path: '/order',
-    component: Layout,
-    children: [
-      {
-        path: 'order',
-        component: () => import('@/views/order/order'),
-        name: 'Order',
-        meta: { title: '订单', icon: 'el-icon-money' }
-      }
-    ]
-  },
+]
+
+//动态加载左侧的栏目
+
+export const asyncRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
