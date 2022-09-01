@@ -19,9 +19,6 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-  alert(123)
-  
-  console.log(123)
   console.log(123)
   if (hasToken) {
     if (to.path === '/login') {
@@ -29,20 +26,18 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
-      console.log(hasGetUserInfo)
-      if (hasGetUserInfo) {
+      const hasRoutes = store.getters.permission_routes.length > 0
+      if (hasRoutes){
         next()
-      } else {
+      }else{
         try {
-          const { roles } =  await store.dispatch('user/getInfo')
-          const accessRoutes = await store.dispatch('permission/generateRoutes',roles)
+          const accessRoutes = await store.dispatch('permission/generateRoutes')
           // 调用router.addRoutes方法,将异步路由添加进去 
           router.options.routers = constantRoutes.concat(accessRoutes)
           router.addRoutes(accessRoutes)
           next({ ...to, replace: true })
         } catch (error) {
-         // remove token and go to login page to re-login
+          // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           Message.error(error.Message || 'Has Error')
           next(`/login?redirect=${to.path}`)

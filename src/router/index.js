@@ -35,90 +35,6 @@ import Layout from '@/layout'
 
 
 
-// {
-//   path: '/category',
-//   component: Layout,
-//   children: [
-//     {
-//       path: 'category',
-//       component: () => import('@/views/category/category'),
-//       name: 'Category',
-//       meta: { title: '分类', icon: 'el-icon-collection' }
-//     }
-//   ]
-// },
-// {
-//   path: '/project',
-//   component: Layout,
-//   children: [
-//     {
-//       path: 'project',
-//       component: () => import('@/views/project/index'),
-//       name: 'Project',
-//       meta: { title: '项目', icon: 'el-icon-reading' }
-//     }
-//   ]
-// },
-// {
-//   path: '/sale_request',
-//   component: Layout,
-//   children: [
-//     {
-//       path: 'saleRequest',
-//       component: () => import('@/views/saleRequest/saleRequest'),
-//       name: 'SaleRequest',
-//       meta: { title: '销售需求', icon: 'el-icon-paperclip' }
-//     }
-//   ]
-// },
-// {
-//   path: '/pre_sale',
-//   component: Layout,
-//   children: [
-//     {
-//       path: 'preSale',
-//       component: () => import('@/views/preSale/preSale'),
-//       name: 'PreSale',
-//       meta: { title: '工程售前', icon: 'form' }
-//     }
-//   ]
-// },
-// {
-//   path: '/order',
-//   component: Layout,
-//   children: [
-//     {
-//       path: 'order',
-//       component: () => import('@/views/order/order'),
-//       name: 'Order',
-//       meta: { title: '订单', icon: 'el-icon-money' }
-//     }
-//   ]
-// },
-// {
-//   path: '/role',
-//   component: Layout,
-//   children: [
-//     {
-//       path: 'role',
-//       component: () => import('@/views/role/role'),
-//       name: 'Role',
-//       meta: { title: '角色', icon: 'el-icon-money' }
-//     }
-//   ]
-// },
-// {
-//   path: '/user',
-//   component: Layout,
-//   children: [
-//     {
-//       path: 'user',
-//       component: () => import('@/views/user/user'),
-//       name: 'User',
-//       meta: { title: '用户', icon: 'el-icon-money' }
-//     }
-//   ]
-// },
 
 export const constantRoutes = [
   {
@@ -148,7 +64,91 @@ export const constantRoutes = [
 //动态加载左侧的栏目
 
 export const asyncRoutes = [
-  // 404 page must be placed at the end !!!
+  {
+    path: '/category',
+    component: Layout,
+    children: [
+      {
+        path: 'category',
+        component: () => import('@/views/category/category'),
+        name: 'Category',
+        meta: { title: '分类', icon: 'el-icon-collection' , api:"api.categories"}
+      }
+    ]
+  },
+  {
+    path: '/project',
+    component: Layout,
+    children: [
+      {
+        path: 'project',
+        component: () => import('@/views/project/index'),
+        name: 'Project',
+        meta: { title: '项目', icon: 'el-icon-reading' , api:"api.projects"}
+      }
+    ]
+  },
+  {
+    path: '/sale_request',
+    component: Layout,
+    children: [
+      {
+        path: 'saleRequest',
+        component: () => import('@/views/saleRequest/saleRequest'),
+        name: 'SaleRequest',
+        meta: { title: '销售需求', icon: 'el-icon-paperclip', api:"api.sale_requests" }
+      }
+    ]
+  },
+  {
+    path: '/pre_sale',
+    component: Layout,
+    children: [
+      {
+        path: 'preSale',
+        component: () => import('@/views/preSale/preSale'),
+        name: 'PreSale',
+        meta: { title: '工程售前', icon: 'form' , api:"api.preSales"}
+      }
+    ]
+  },
+  {
+    path: '/order',
+    component: Layout,
+    children: [
+      {
+        path: 'order',
+        component: () => import('@/views/order/order'),
+        name: 'Order',
+        meta: { title: '订单', icon: 'el-icon-money', api:"api.order" }
+      }
+    ]
+  },
+  {
+    path: '/role',
+    component: Layout,
+    children: [
+      {
+        path: 'role',
+        component: () => import('@/views/role/role'),
+        name: 'Role',
+        meta: { title: '角色', icon: 'el-icon-money', api:"api.roles" }
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    children: [
+      {
+        path: 'user',
+        component: () => import('@/views/user/user'),
+        name: 'User',
+        meta: { title: '用户', icon: 'el-icon-money', api:"api.users" }
+      }
+    ]
+  },
+    // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
