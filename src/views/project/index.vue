@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.filter_name" placeholder="项目名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.filter_name" placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.filter_status" placeholder="状态" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in status" :key="item.key" :label="item.name" :value="item.key" />
       </el-select>
@@ -12,73 +12,103 @@
         增加
       </el-button>
     </div>
-
-  <el-table
+    <el-table
       :data="list"
       border
       fit
       highlight-current-row
       style="width: 100%; max-width: 1600px;"
-  >
-     <el-table-column label="编号" prop="id"  align="center" width="80" >
+    >
+      <el-table-column label="编号" prop="id"  align="center" width="80" >
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
       </el-table-column>
-     <el-table-column label="名称" width="300" align="center">
+      <el-table-column label="项目名称" width="150" align="center">
         <template slot-scope="{row}">
           <span class="link-type" >{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建者" width="200" align="center">
+      <el-table-column label="客户名" width="150" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.user.name ?row.user.name:"" }}</span>
+          <span class="link-type" >{{ row.customer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态"  width="200" align="center">
+      <el-table-column label="项目节点" width="170" align="center">
+        <template slot-scope="{row}">
+            <span class="link-type" >{{ row.project_duration}} </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="需求产品" width="200" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" >{{ row.product_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="项目预估金额" width="150" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" >{{ row.cost }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="需求创建时间" width="160" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.created_at}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建者" width="120" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.user.username ? row.user.username: "" }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态"  width="120" align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusMap">
             {{ row.status_cn }}
           </el-tag>
         </template>
       </el-table-column>
-     <el-table-column label="描述"  width="200" align="center">
-        <template slot-scope="{row}">
-          <el-button  size="mini" type="success"   @click="showDescription(row)">
-            查看
-          </el-button>
-        </template>
-    </el-table-column>
-    <el-table-column label="创建时间" width="300" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.created_at}}</span>
-        </template>
-      </el-table-column>
-    <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row}" >
-         <span  v-if="row.status =='continue'" style="margin-right:10px">
-            <el-button type="primary" size="mini"  @click="handleModifyStatus(row, 'cancel')">
-            取消 
+        <span  v-if="row.status =='continue'" style="margin-right:10px">
+            <el-button type="primary" size="mini"  @click="showCloseDialog(row)">
+              关闭丢单 
             </el-button>
-            <el-button v-if="row.status!='published'" size="mini" type="success"   @click="handleModifyStatus(row,'finish')">
-                结束
+            <el-button v-if="row.status!='published'" size="mini" type="success"   @click="handleModifyStatus(row.id,'finish')">
+              关闭拿单
             </el-button>
-         </span>
-          <el-button v-if="row.status!='published'" size="mini" type="success"   @click="deleteData(row)">
+        </span>
+          <el-button  size="mini" type="danger"    @click="deleteData(row)">
             删除
         </el-button>
         </template> 
-     </el-table-column>
+      </el-table-column>
   </el-table>
+
   <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :per_page.sync="listQuery.per_page" @pagination="getList" />
 
-  <el-dialog title="新增" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="tmp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="名称" prop="name">
+  <el-dialog title="新增项目" :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm" :rules="rules" :model="tmp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="项目名称" prop="name">
           <el-input v-model="tmp.name" />
         </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="tmp.description" :autosize="{ minRows: 2, maxRows: 4}" type="textarea"  />
+        <el-form-item label="客户名" prop="customer_name">
+          <el-input v-model="tmp.customer_name" />
+        </el-form-item>
+        <el-form-item label="需求产品" prop="product_name">
+          <el-input v-model="tmp.product_name" />
+        </el-form-item>
+        <el-form-item label="项目节点" prop="product_time">
+          <el-date-picker
+          v-model="tmp.project_time" 
+          type="monthrange"
+          range-separator="至"
+          start-placeholder="开始月份"
+          end-placeholder="结束月份" 
+          value-format="yyyy-MM"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="项目预估金额" prop="cost">
+          <el-input v-model="tmp.cost" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -91,13 +121,21 @@
       </div>
   </el-dialog>
 
-
-   <el-dialog title="项目描述" :visible.sync="dialogDescriptionVisible">
-     <p class="description">
-        {{description}}
-     </p>
+  <el-dialog title="关闭丢单原因" :visible.sync="showCloseReasonDialog" width="30%">
+    <el-form  ref="closeForm" :model="closeForm" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
+      <el-form-item label="丢单原因" >
+          <el-input v-model="closeForm.close_reason"  type="textarea"   :rows="4"/>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelCloseReasonDialog">
+          取消
+        </el-button>
+        <el-button type="primary" @click="handleModifyStatus(close_row_id, 'cancel')">
+          确认
+        </el-button>
+      </div>
   </el-dialog>
-
   </div>
 </template>
 
@@ -121,9 +159,12 @@ export default {
   data() {
     return {
       list: null,
-      description: "",
       total: 0,
-      dialogDescriptionVisible: false,
+      showCloseReasonDialog: false,
+      closeForm : {
+        close_reason:""
+      },
+      close_row_id: 0,
       status:[
         {
             "key" :"continue",
@@ -131,11 +172,11 @@ export default {
         },
         {
             "key" :"cancel",
-            "name" :"已取消"
+            "name" :"关闭丢单"
         },
         {
             "key" :"finish",
-            "name" :"已完成"
+            "name" :"关闭拿单"
         },
       ],
       listQuery: {
@@ -146,12 +187,16 @@ export default {
       },
       tmp: {
         name: "",
-        description: '',
+        product_name: '',
+        customer_name: '',
+        project_time: [],
+        cost: '',
       },
       dialogFormVisible: false,
       rules: {
-        name: [{ required: true, message: '请填写名称', trigger: 'change' }],
-        description: [{ required: true, message: '请填写描述', trigger: 'blur' }],
+        name         : [{ required: true, message: '请填写项目名称', trigger: 'change' }],
+        product_name : [{ required: true, message: '请填写需求产品', trigger: 'change' }],
+        customer_name: [{ required: true, message: '请填写客户名称', trigger: 'change' }],
       },
     }
   },
@@ -165,22 +210,18 @@ export default {
         this.total = response.total
       })
     },
-    showDescription(row) {
-        this.description = row.description
-        this.dialogDescriptionVisible= true
-    },
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
-     var data ={"status":status}
-     updateProjectsStatus(row.id,data).then(res =>{
-        this.$message({
-          message: '操作Success',
-          type: 'success'
-        })
-        row.status = status
+    handleModifyStatus(id, status) {
+     var data ={"status":status, "close_reason": this.closeForm.close_reason}
+     updateProjectsStatus(id, data).then(res =>{
+        if (status == 'cancel'){
+          this.$refs['closeForm'].resetFields()
+          this.showCloseReasonDialog = false
+        }
+        this.retrieve()
      })  
     },
     createData() {
@@ -189,12 +230,8 @@ export default {
           addProject(this.tmp).then(() => {
             this.getList().then(res=>{
                 this.dialogFormVisible = false
-                this.$notify({
-                    title: 'Success',
-                    message: 'Created Successfully',
-                    type: 'success',
-                    duration: 2000
-                })
+                this.$refs['dataForm'].resetFields()
+                this.retrieve()
             })
           })
         }
@@ -202,15 +239,30 @@ export default {
     },
     deleteData(row){
       deleteProjects(row.id).then(res=>{
+        this.retrieve()
+      })
+    },
+    showCloseDialog(row){
+      this.close_row_id =  row.id
+      this.showCloseReasonDialog = true
+    },
+    cancelCloseReasonDialog(){
+      this.close_row_id = 0
+      this.showCloseReasonDialog = false
+      this.$refs['closeForm'].resetFields()
+    },
+    retrieve(){
+      this.getList().then(res=>{
+        this.dialogFormVisible = false
         this.$notify({
-                    title: 'Success',
-                    message: '删除成功',
-                    type: 'success',
-                    duration: 2000
+            title: 'Success',
+            message: '操作成功',
+            type: 'success',
+            duration: 2000
         })
       })
-    }
-  }
+    },
+  }  
 }
 </script>
 

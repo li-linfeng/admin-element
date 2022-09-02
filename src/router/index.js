@@ -84,7 +84,7 @@ export const asyncRoutes = [
         path: 'project',
         component: () => import('@/views/project/index'),
         name: 'Project',
-        meta: { title: '项目', icon: 'el-icon-reading' , api:"api.projects"}
+        meta: { title: '项目池', icon: 'el-icon-reading' , api:"api.projects"}
       }
     ]
   },
