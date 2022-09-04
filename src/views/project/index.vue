@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <!-- <div class="filter-container">
       <el-input v-model="listQuery.filter_name" placeholder="输入搜索内容" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.filter_status" placeholder="状态" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in status" :key="item.key" :label="item.name" :value="item.key" />
@@ -11,7 +11,9 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click=" dialogFormVisible = true">
         增加
       </el-button>
-    </div>
+    </div> -->
+    <QueryCol :status="status" :clos="cols" :filter_col="listQuery.filter_col" :filter_status="listQuery.filter_status" :filter_val="listQuery.filter_val" @handleFilter="handleFilter" />
+
     <el-table
       :data="list"
       border
@@ -142,10 +144,11 @@
 <script>
 import { getProjectList, addProject, updateProjectsStatus, deleteProjects } from '@/api/project'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import QueryCol from '@/components/QueryCol' // secondary package based on el-pagination
 
 export default {
   name: 'ProjectIndex',
-  components: { Pagination },
+  components: { Pagination, QueryCol },
   filters :{
     statusMap: (status) => { // msg表示要过滤的数据，a表示传入的参数
         var sta = {
@@ -165,6 +168,16 @@ export default {
         close_reason:""
       },
       close_row_id: 0,
+      cols :[
+        {
+          "key" : "id",
+          "name": "编号",
+        },
+        {
+          "key" : "customer_name",
+          "name": "客户名称",
+        },
+     ],
       status:[
         {
             "key" :"continue",
