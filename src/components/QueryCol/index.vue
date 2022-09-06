@@ -1,16 +1,14 @@
 <template>
-  <div class="filter-container">
-      <el-form-item label="搜索字段"  class="filter-item" >
-        <el-select v-model="filter_col" placeholder="字段" clearable  style="width: 130px">
-          <el-option v-for="item in cols" :key="item.key" :label="item.name" :value="item.key" />
-        </el-select>
-      </el-form-item>
-      <el-input v-model="filter_val" placeholder="输入搜索内容" style="width:200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="filter_status" placeholder="状态" clearable class="filter-item" style="width: 130px">
+  <div class="filter-container" style="display: inline; margin-bottom: 15px;">
+      <el-select v-model="col" placeholder="搜索字段" clearable  class="filter-item" style="width: 130px">
+        <el-option v-for="item in cols" :key="item.key" :label="item.name" :value="item.key" />
+      </el-select>
+      <el-input v-model="val" placeholder="输入搜索内容" style="width:200px;" class="filter-item" @keyup.enter.native="search" />
+      <el-select v-model="sta" placeholder="状态" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in status" :key="item.key" :label="item.name" :value="item.key" />
       </el-select>
 
-      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="search">
         搜索
       </el-button>
     </div> 
@@ -44,12 +42,24 @@ export default {
       }
     },
   },
+  data(){
+    return {
+      col: this.filter_col,
+      val: this.filter_val,
+      sta: this.filter_status,
+    }
+  },
   created(){
-    console.log(123)
+
   },
   methods:{
-    handleFilter() {
-      this.$emit('handleFilter')
+    search() {
+      var  data = {
+        col: this.col,
+        val: this.val,
+        sta: this.sta,
+      }
+      this.$emit('handleFilter',data)
     }
   }
 }
@@ -63,5 +73,8 @@ export default {
     justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
+  }
+  .filter_item{
+    margin-right: 10px;
   }
 </style>

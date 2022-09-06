@@ -24,7 +24,7 @@ export function createSaleRequest(data) {
   })
 }
 
-export function updateSaleRequest(id, data) {
+export function updateSaleRequest(data,id) {
   return request({
     url: `/api/sale_requests/${id}`,
     method: 'put',
@@ -47,10 +47,9 @@ export function getSaleRequestNum(){
 }
 
 
-export function dispatchHandler(id, data){
+export function publishSaleRequest(id){
   return request({
-    url: `/api/sale_requests/${id}/handle_user`,
+    url: `/api/sale_requests/${id}/publish`,
     method: 'post',
-    data
   })
 }

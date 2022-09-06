@@ -1,353 +1,510 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="listQuery.filter_name" placeholder="名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      
-      <el-select v-model="listQuery.filter_status" clearable  placeholder="状态">
-       <el-option v-for="item in statusOptions" :key="item.label" :label="item.label" :value="item.value" />
-      </el-select>
-      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="showAddDialog">
-        增加
-      </el-button>
-    </div>
+    <QueryCol :status="statusOptions"
+              :cols="cols"
+              :filter_col="listQuery.filter_col"
+              :filter_status="listQuery.filter_status"
+              :filter_val="listQuery.filter_val"
+              @handleFilter="handleFilter" />
+    <el-button class="filter-item"
+               style="margin-left: 10px; margin-bottom: 25px;"
+               type="primary"
+               icon="el-icon-edit"
+               @click="showDialog('add')">
+      增加
+    </el-button>
 
-  <el-table
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%; max-width: 1600px;"
-  >
-     <el-table-column label="需求编号"  align="center" width="200" >
+    <el-table :data="list"
+              border
+              fit
+              highlight-current-row
+              style="width: 100%; max-width: 1600px;">
+      <el-table-column label="需求编号"
+                       align="center"
+                       width="200">
         <template slot-scope="{row}">
           <span>{{row.sale_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="客户类型"  align="center" width="120" >
+      <el-table-column label="项目编号"
+                       align="center"
+                       width="80">
+        <template slot-scope="{row}">
+          <span>{{row.project_id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="客户名称"
+                       align="center"
+                       width="120">
         <template slot-scope="{row}">
           <span>{{row.customer_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品性质"  align="center" width="120" >
+      <el-table-column label="产品性质"
+                       align="center"
+                       width="120">
         <template slot-scope="{row}">
           <span>{{row.product_type }}</span>
         </template>
       </el-table-column>
-     <el-table-column label="附件"  align="center" width="350" >
+      <el-table-column label="希望货期"
+                       align="center"
+                       width="120">
         <template slot-scope="{row}">
-          <div v-for="item in row.uploads" :key="item.name">
-              <span>{{item.name}}</span>  
-              <el-link :underline="false" icon="el-icon-download" :href="item.url"  type="primary" download>下载</el-link>
+          <span>{{row.expect_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="附件"
+                       align="center"
+                       width="250">
+        <template slot-scope="{row}">
+          <div v-for="item in row.uploads"
+               :key="item.name">
+            <span>{{item.name}}</span>
+            <el-link :underline="false"
+                     icon="el-icon-download"
+                     :href="item.url"
+                     type="primary"
+                     download>下载</el-link>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="应用条件"  align="center" width="80" >
+      <el-table-column label="创建人"
+                       align="center"
+                       width="120">
         <template slot-scope="{row}">
-           <el-button  size="mini" type="success"   @click="showDetailDialog(row)">
+          <span>{{row.user.username }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="应用条件"
+                       align="center"
+                       width="80">
+        <template slot-scope="{row}">
+          <el-button size="mini"
+                     type="success"
+                     @click="showDialog('detail',row)">
             查看
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="状态"  width="200" align="center">
+      <el-table-column label="状态"
+                       width="120"
+                       align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusMap">
             {{ row.status_cn }}
           </el-tag>
         </template>
       </el-table-column>
-    <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="{row}" >
-        <el-button  size="mini" type="success"   @click="showDetailDialog(row)">
-            查看详情
-        </el-button>
-        <el-button  size="mini" type="danger"   @click="deleteData(row)">
-            删除
-        </el-button>
-        <el-button  size="mini" type="primary" v-if="row.can_dispatch"  @click="dispatchUser(row)">
-            指定处理人
-        </el-button>
-        </template> 
-     </el-table-column>
-  </el-table>
+      <el-table-column label="处理人"
+                       align="center"
+                       width="120">
+        <template slot-scope="{row}">
+          <span>{{row.handler.username }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作"
+                       align="center"
+                       class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
+          <el-button size="mini"
+                     type="danger"
+                     v-if="row.status == 'open' || row.status=='return' "
+                     @click="publish(row)">
+            发布
+          </el-button>
+          <el-button size="mini"
+                     type="primary"
+                     @click="showDialog('update',row)">
+            修改
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-  <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :per_page.sync="listQuery.per_page" @pagination="getList" />
+    <pagination v-show="total>0"
+                :total="total"
+                :page.sync="listQuery.page"
+                :per_page.sync="listQuery.per_page"
+                @pagination="getList" />
 
-  <el-dialog :title="dialogAction == 'add' ? '增加' :'详情'" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm"  :model="tmp" label-position="left" label-width="140px" style="width:1200px; height:800px;margin-left:50px;">
-        <el-form-item label="需求编号" prop="sale_num" >
-          <el-input v-model="tmp.sale_num"  class ="small_input" :disabled="dialogAction =='detail'" /> 
-          <el-button v-if="dialogAction == 'add'" type="primary" @click="getSaleNum" style="float:left; margin-left:20px ;">获取编码</el-button>
+    <el-dialog :title="actions[dialogAction]"
+               :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm"
+               :model="tmp"
+               label-position="left"
+               label-width="140px"
+               style="width:1200px; height:800px;margin-left:50px;"
+               :rules="rules">
+        <el-form-item label="需求编号"
+                      prop="sale_num">
+          <el-input v-model="tmp.sale_num"
+                    class="small_input"
+                    :disabled="dialogAction != 'add'" />
+          <el-button v-if="dialogAction == 'add'"
+                     type="primary"
+                     @click="getSaleNum"
+                     style="float:left; margin-left:20px ;">获取编码</el-button>
         </el-form-item>
-       
-        <el-form-item label="产品类型" prop="product_type">
-          <el-select v-model="tmp.product_type" :disabled="dialogAction == 'add' ? false :true" placeholder="请选择">
-            <el-option
-              v-for="item in product_types"
-              :key="item.key"
-              :label="item.key"
-              :value="item.val">
-            </el-option>
-            </el-select>
+
+        <el-form-item label="项目编号"
+                      prop="project_id">
+          <el-input v-model="tmp.project_id"
+                    class="small_input"
+                    :disabled="editable[dialogAction]" />
         </el-form-item>
-        <el-form-item label="客户性质" prop="customer_type">
-          <el-select v-model="tmp.customer_type" :disabled="dialogAction == 'add' ? false :true" placeholder="请选择">
-            <el-option
-              v-for="item in custom_types"
-              :key="item.key"
-              :label="item.key"
-              :value="item.val">
+        <el-form-item label="产品类型"
+                      prop="product_type">
+          <el-select v-model="tmp.product_type"
+                     :disabled="editable[dialogAction]"
+                     placeholder="请选择">
+            <el-option v-for="item in product_types"
+                       :key="item.key"
+                       :label="item.key"
+                       :value="item.val">
             </el-option>
           </el-select>
         </el-form-item>
-        <label class="el-form-item__label" style="width:700px;font-size: 20px;margin-bottom: 10px;display: block;">应用条件:</label>
-      
+
+        <el-form-item label="客户名称"
+                      prop="customer_type">
+          <el-input v-model="tmp.customer_type"
+                    class="small_input"
+                    :disabled="editable[dialogAction]" />
+        </el-form-item>
+
+        <el-form-item label="希望货期"
+                      prop="expect_time">
+          <el-input v-model="tmp.expect_time"
+                    class="small_input"
+                    :disabled="editable[dialogAction]" />
+        </el-form-item>
+
+        <label class="el-form-item__label"
+               style="width:700px;font-size: 20px;margin-bottom: 10px;display: block;">应用条件:</label>
+
         <div style="height:400px">
-          <el-form-item label="设备名称" prop="device_name"  class ="small_input" >
-              <el-input v-model="tmp.device_name"  class="input_val" :disabled="dialogAction =='detail'"/>
+          <el-form-item label="设备名称"
+                        prop="device_name"
+                        class="small_input">
+            <el-input v-model="tmp.device_name"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-          <el-form-item label="轴1直径及公差" prop="shaft_one_diameter_tolerance" class ="small_input small_input_right">
-              <el-input v-model="tmp.shaft_one_diameter_tolerance"  class="input_val"  :disabled="dialogAction =='detail'"/>
+          <el-form-item label="轴1直径及公差"
+                        prop="shaft_one_diameter_tolerance"
+                        class="small_input small_input_right">
+            <el-input v-model="tmp.shaft_one_diameter_tolerance"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-          <el-form-item label="驱动类型" prop="driver_type"  class ="small_input " >
-              <el-input v-model="tmp.driver_type"  class="input_val" :disabled="dialogAction =='detail'"/>
+          <el-form-item label="驱动类型"
+                        prop="driver_type"
+                        class="small_input ">
+            <el-input v-model="tmp.driver_type"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-          <el-form-item label="轴2直径及公差" prop="shaft_two_diameter_tolerance" class ="small_input  small_input_right">
-              <el-input v-model="tmp.shaft_two_diameter_tolerance"  class="input_val" :disabled="dialogAction =='detail'" /> 
+          <el-form-item label="轴2直径及公差"
+                        prop="shaft_two_diameter_tolerance"
+                        class="small_input  small_input_right">
+            <el-input v-model="tmp.shaft_two_diameter_tolerance"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-          <el-form-item label="驱动功率" prop="driver_power"  class ="small_input " >
-              <el-input v-model="tmp.driver_power"  class="input_val" :disabled="dialogAction =='detail'" />
+          <el-form-item label="驱动功率"
+                        prop="driver_power"
+                        class="small_input ">
+            <el-input v-model="tmp.driver_power"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-          <el-form-item label="轴1配合段长度" prop="shaft_one_match_distance" class ="small_input small_input_right">
-              <el-input v-model="tmp.shaft_one_match_distance"   class="input_val"  :disabled="dialogAction =='detail'"/> 
+          <el-form-item label="轴1配合段长度"
+                        prop="shaft_one_match_distance"
+                        class="small_input small_input_right">
+            <el-input v-model="tmp.shaft_one_match_distance"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-          <el-form-item label="使用转速" prop="rpm"  class ="small_input" >
-              <el-input v-model="tmp.rpm"  class="input_val"  :disabled="dialogAction =='detail'" />
+          <el-form-item label="使用转速"
+                        prop="rpm"
+                        class="small_input">
+            <el-input v-model="tmp.rpm"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-          <el-form-item label="轴2配合段长度" prop="shaft_two_match_distance" class ="small_input small_input_right">
-              <el-input v-model="tmp.shaft_two_match_distance"   class="input_val" :disabled="dialogAction =='detail'" /> 
+          <el-form-item label="轴2配合段长度"
+                        prop="shaft_two_match_distance"
+                        class="small_input small_input_right">
+            <el-input v-model="tmp.shaft_two_match_distance"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-          <el-form-item label="设定扭矩" prop="torque"  class ="small_input" >
-              <el-input v-model="tmp.torque"   class="input_val" :disabled="dialogAction =='detail'" />
+          <el-form-item label="设定扭矩"
+                        prop="torque"
+                        class="small_input">
+            <el-input v-model="tmp.torque"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
-      
-          <el-form-item label="轴端面间距" prop="shaft_space_distance" class ="small_input small_input_right">
-              <el-input v-model="tmp.shaft_space_distance" class="input_val" :disabled="dialogAction =='detail'" /> 
+
+          <el-form-item label="轴端面间距"
+                        prop="shaft_space_distance"
+                        class="small_input small_input_right">
+            <el-input v-model="tmp.shaft_space_distance"
+                      class="input_val"
+                      :disabled="editable[dialogAction]" />
           </el-form-item>
         </div>
         <div style="width: 400px;margin-bottom: 20px;">
-          <el-form-item label="附件" >
-              <el-upload
-                class="upload-demo"
-                action="uploadFile"
-                :before-upload="beforeUpload"
-                :file-list="fileList">
-                <el-button size="small" type="primary" :disabled="dialogAction =='detail'" >点击上传</el-button>
+          <el-form-item label="附件">
+            <el-upload class="upload-demo"
+                       action="uploadFile"
+                       :before-upload="beforeUpload"
+                       :file-list="fileList">
+              <el-button size="small"
+                         type="primary"
+                         :disabled="editable[dialogAction]">点击上传</el-button>
             </el-upload>
-         </el-form-item>
-        <el-form-item label="备注" prop="remark" >
-            <el-input v-model="tmp.remark"  type ="textarea"  style="width:80%"  :disabled="dialogAction =='detail'" /> 
-        </el-form-item>
+          </el-form-item>
+          <el-form-item label="备注"
+                        prop="remark">
+            <el-input v-model="tmp.remark"
+                      type="textarea"
+                      style="width:80%"
+                      :disabled="editable[dialogAction]" />
+          </el-form-item>
         </div>
-       
+
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer"
+           class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="submit" :disabled="dialogAction =='detail'" >
+        <el-button type="primary"
+                   @click="submit"
+                   :disabled="editable[dialogAction]">
           确认
         </el-button>
       </div>
-  </el-dialog>
-
-
-
-
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { getSaleRequestList, createSaleRequest, updateSaleRequest, deleteSaleRequest, getSaleRequestNum , dispatchHandler } from '@/api/saleRequest'
-import { uploadFile  } from '@/api/upload'
+import { getSaleRequestList, createSaleRequest, updateSaleRequest, deleteSaleRequest, getSaleRequestNum, publishSaleRequest } from '@/api/saleRequest'
+import { uploadFile } from '@/api/upload'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import QueryCol from '@/components/QueryCol' // secondary package based on el-pagination
 
 export default {
   name: 'SaleRequestIndex',
-  components: { Pagination },
-  filters :{
+  components: { Pagination, QueryCol },
+  filters: {
     statusMap: (status) => { // msg表示要过滤的数据，a表示传入的参数
-        var sta = {
-            open: 'success',
-            handle: 'primary',
-            finish: 'info',
-            cancel: 'error',
-        }
-        return sta.status
+      var sta = {
+        open: 'info',
+        published: 'primary',
+        return: 'danger',
+        finish: 'success',
+      }
+      return sta.status
     }
-  },  
-  data() {
+  },
+  data () {
     return {
       list: null,
       description: "",
       total: 0,
+      actions: {
+        'add': '+新需求',
+        'detail': '详情',
+        'update': '编辑',
+      },
+      editable: {
+        'add': false,
+        'detail': true,
+        'update': false,
+      },
       dialogFormVisible: false,
       dialogAction: "add",
-      statusOptions:[
+      statusOptions: [
         {
-          label:"新建",
-          value:"open",
+          name: "销售",
+          key: "open",
         },
         {
-          label:"处理中",
-          value:"handle",
+          name: "处理",
+          key: "published",
         },
         {
-          label:"完成",
-          value:"finish",
+          name: "退回",
+          key: "return",
         },
         {
-          label:"取消",
-          value:"cancel",
+          name: "完成",
+          key: "finish",
         },
       ],
-      product_types :[
-        {"key" :"TL", "val" :"TL"},
-        {"key" :"GRID", "val" :"GRID"},
-        {"key" :"GEAR", "val" :"GEAR"},
-        {"key" :"ELAS", "val" :"ELAS"},
+      cols: [
+        {
+          "key": "sale_num",
+          "name": "需求编号",
+        },
+        {
+          "key": "customer_type",
+          "name": "客户名称",
+        },
+        {
+          "key": "product_type",
+          "name": "产品性质",
+        },
       ],
-      custom_types :[
-        {"key" :"E", "val" :"E"},
-        {"key" :"G", "val" :"G"},
-        {"key" :"C", "val" :"C"},
-        {"key" :"B", "val" :"B"},
+      product_types: [
+        { "key": "HNCGD", "val": "HNCGD" },
+        { "key": "HNCGR", "val": "HNCGR" },
+        { "key": "HNCTL", "val": "HNCTL" },
+        { "key": "HNCJW", "val": "HNCJW" },
+        { "key": "HNCFE", "val": "HNCFE" },
+        { "key": "HNCHB", "val": "HNCHB" },
+        { "key": "HNCTE", "val": "HNCTE" },
+        { "key": "HNCWD", "val": "HNCWD" },
+        { "key": "HNCCE", "val": "HNCCE" },
+        { "key": "HNCRB", "val": "HNCRB" },
+        { "key": "HNCDC", "val": "HNCDC" },
+        { "key": "HNG", "val": "HNG" },
+        { "key": "HNS", "val": "HNS" },
       ],
-      fileList:[],
+      fileList: [],
       listQuery: {
         page: 1,
         per_page: 10,
-        filter_name:"",
-        filter_status:"",
+        filter_col: "",
+        filter_val: "",
+        filter_status: "",
       },
       tmp: {
         sale_num: "",
-        description: '',
+      },
+      rules: {
+        sale_num: [{ required: true, message: '请填写需求编号', trigger: 'change' }],
+        customer_type: [{ required: true, message: '请填写客户名称', trigger: 'change' }],
+        product_type: [{ required: true, message: '请填写产品性质', trigger: 'change' }],
       },
     }
   },
-  created() {
+  created () {
     this.getList()
   },
   methods: {
-    getList() {
+    getList () {
       return getSaleRequestList(this.listQuery).then(response => {
         this.list = response.data
         this.total = response.total
         this.tmp = {
-          sale_num:"",
+          sale_num: "",
         }
       })
     },
-    handleFilter() {
+    handleFilter (params) {
       this.listQuery.page = 1
+      this.listQuery.page = 1
+      this.listQuery.filter_col = params.col ? params.col : ""
+      this.listQuery.filter_val = params.val ? params.val : ""
+      this.listQuery.filter_status = params.sta ? params.sta : ""
       this.getList()
     },
-    showAddDialog(){
+    showDialog (action, row) {
       this.dialogFormVisible = true
-      this.dialogAction = "add"
-    },
-    showDetailDialog(row){
-      this.dialogFormVisible = true
-      this.dialogAction = "detail"
-      this.tmp = row
-      this.fileList = row.uploads
-    },
-    getSaleNum(){
-      getSaleRequestNum().then(res=>{
-         this.tmp.sale_num = res.data.uuid
+      this.dialogAction = action
+      this.$nextTick(() => {
+        if (action == "add") {
+          this.$refs['dataForm'].resetFields()
+          this.fileList = []
+        } else {
+          this.tmp = JSON.parse(JSON.stringify(row))
+          this.fileList = JSON.parse(JSON.stringify(row.uploads))
+        }
       })
     },
-    dispatchUser(row){
-      var data = {user_id :0}
-      dispatchHandler(row.id, data).then(() => {
-        this.retrieve()
+    getSaleNum () {
+      getSaleRequestNum().then(res => {
+        this.tmp.sale_num = res.data.uuid
       })
     },
-    beforeUpload(file, fileList){
+    beforeUpload (file, fileList) {
       let fd = new FormData();
-      fd.append('file',file);//传文件
-      fd.append('type','file');//传文件
-      fd.append('source_type','sale_request');//传文件
-      uploadFile(fd).then(res=>{
+      fd.append('file', file);//传文件
+      fd.append('type', 'file');//传文件
+      fd.append('source_type', 'sale_request');//传文件
+      uploadFile(fd).then(res => {
         this.fileList.push(res.data)
       })
     },
-    submit(){
-      if (this.dialogAction == "add"){
-        this.addData()
-      }else{
-        this.editData()
+    submit () {
+      if (this.dialogAction == "add") {
+        this.handleData(createSaleRequest)
+      } else {
+        this.handleData(updateSaleRequest)
       }
     },
-    addData() {
+    handleData (fn) {
       let ids = []
-      for (let i=0; i< this.fileList.length; i++){
-          ids.push(this.fileList[i].id)
+      for (let i = 0; i < this.fileList.length; i++) {
+        ids.push(this.fileList[i].id)
       }
       this.tmp.upload_ids = ids.join()
-      createSaleRequest(this.tmp).then(() => {
-        this.retrieve()
-      })
-    },
-    editData() {
       this.$refs['dataForm'].validate((valid) => {
-        if(valid) {
-          updateSaleRequest(this.tmp.id, this.tmp).then(() => {
+        if (valid) {
+          fn(this.tmp, this.tmp.id).then(() => {
             this.retrieve()
           })
         }
       })
     },
-    deleteData(row){
-      deleteSaleRequest(row.id).then(res=>{
+    publish (row) {
+      publishSaleRequest(row.id).then(res => {
         this.retrieve()
       })
     },
-    retrieve(){
-      this.getList().then(res=>{
+    deleteData (row) {
+      deleteSaleRequest(row.id).then(res => {
+        this.retrieve()
+      })
+    },
+    retrieve () {
+      this.getList().then(res => {
         this.dialogFormVisible = false
         this.$notify({
-            title: 'Success',
-            message: '操作成功',
-            type: 'success',
-            duration: 2000
+          title: 'Success',
+          message: '操作成功',
+          type: 'success',
+          duration: 2000
         })
       })
-    },  
+    },
   }
 }
 </script>
 
 <style>
-    .filter-container {
-        margin-bottom: 20px;
-    }
-   .filter-item {
-        margin-left: 5px;
-        margin-right: 15px;
-    }
-    .small_input{
-        float:left; 
-        width:43%;
-    }
-    .small_input_right{
-      margin-left: 15px; 
-    }
-    .input_val{
-      width:50% !important;
-    }
+.filter-container {
+  margin-bottom: 20px;
+}
+.filter-item {
+  margin-left: 5px;
+  margin-right: 15px;
+}
+.small_input {
+  float: left;
+  width: 43%;
+}
+.small_input_right {
+  margin-left: 15px;
+}
+.input_val {
+  width: 50% !important;
+}
 </style>

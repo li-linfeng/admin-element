@@ -108,7 +108,7 @@ export const asyncRoutes = [
         path: 'preSale',
         component: () => import('@/views/preSale/preSale'),
         name: 'PreSale',
-        meta: { title: '工程售前', icon: 'form' , api:"api.preSales"}
+        meta: { title: '售前处理', icon: 'form' , api:"api.preSales"}
       }
     ]
   },

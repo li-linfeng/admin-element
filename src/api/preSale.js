@@ -16,4 +16,12 @@ export function updatePreSale(id, data) {
   })
 }
 
+export function modifyPreSaleStatus(id, data) {
+  return request({
+    url: `/api/preSales/${id}/status`,
+    method: 'post',
+    data
+  })
+}
+
 

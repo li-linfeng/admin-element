@@ -12,7 +12,7 @@
         增加
       </el-button>
     </div> -->
-    <QueryCol :status="status" :clos="cols" :filter_col="listQuery.filter_col" :filter_status="listQuery.filter_status" :filter_val="listQuery.filter_val" @handleFilter="handleFilter" />
+    <QueryCol :status="status" :cols="cols" :filter_col="listQuery.filter_col" :filter_status="listQuery.filter_status" :filter_val="listQuery.filter_val" @handleFilter="handleFilter" />
 
     <el-table
       :data="list"
@@ -174,6 +174,14 @@ export default {
           "name": "编号",
         },
         {
+          "key" : "name",
+          "name": "项目名称",
+        },
+           {
+          "key" : "product_name",
+          "name": "需求产品",
+        },
+        {
           "key" : "customer_name",
           "name": "客户名称",
         },
@@ -195,8 +203,9 @@ export default {
       listQuery: {
         page: 1,
         per_page: 10,
-        filter_name:"",
         filter_status:"",
+        filter_col:"",
+        filter_val:"",
       },
       tmp: {
         name: "",
@@ -223,8 +232,11 @@ export default {
         this.total = response.total
       })
     },
-    handleFilter() {
-      this.listQuery.page = 1
+    handleFilter(params) {
+      this.listQuery.page          = 1
+      this.listQuery.filter_col    = params.col ? params.col:""
+      this.listQuery.filter_val    = params.val ?  params.val:""
+      this.listQuery.filter_status = params.sta ?  params.sta:""
       this.getList()
     },
     handleModifyStatus(id, status) {
