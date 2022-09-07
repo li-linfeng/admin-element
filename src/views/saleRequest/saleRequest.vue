@@ -136,11 +136,12 @@
                label-width="140px"
                style="width:1200px; height:800px;margin-left:50px;"
                :rules="rules">
+
         <el-form-item label="需求编号"
                       prop="sale_num">
           <el-input v-model="tmp.sale_num"
                     class="small_input"
-                    :disabled="dialogAction != 'add'" />
+                    :disabled="true" />
           <el-button v-if="dialogAction == 'add'"
                      type="primary"
                      @click="getSaleNum"
@@ -150,8 +151,7 @@
         <el-form-item label="项目编号"
                       prop="project_id">
           <el-input v-model="tmp.project_id"
-                    class="small_input"
-                    :disabled="editable[dialogAction]" />
+                    class="small_input" />
         </el-form-item>
         <el-form-item label="产品类型"
                       prop="product_type">
@@ -387,6 +387,21 @@ export default {
       },
       tmp: {
         sale_num: "",
+        project_id: 0,
+        product_type: "",
+        customer_type: "",
+        expect_time: "",
+        device_name: "",
+        shaft_one_diameter_tolerance: "",
+        driver_type: "",
+        shaft_two_diameter_tolerance: "",
+        driver_power: "",
+        shaft_one_match_distance: "",
+        rpm: "",
+        shaft_two_match_distance: "",
+        torque: "",
+        shaft_space_distance: "",
+        remark: "",
       },
       rules: {
         sale_num: [{ required: true, message: '请填写需求编号', trigger: 'change' }],
@@ -403,9 +418,6 @@ export default {
       return getSaleRequestList(this.listQuery).then(response => {
         this.list = response.data
         this.total = response.total
-        this.tmp = {
-          sale_num: "",
-        }
       })
     },
     handleFilter (params) {
