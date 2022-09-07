@@ -24,11 +24,19 @@
                        :selectable="canBeSelect"
                        width="55">
       </el-table-column>
+
       <el-table-column label="需求编号"
                        align="center"
                        width="200">
         <template slot-scope="{row}">
           <span>{{row.sale_request.sale_num }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="项目编号"
+                       align="center"
+                       width="100">
+        <template slot-scope="{row}">
+          <span>{{row.sale_request.project_id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="客户名称"
@@ -135,19 +143,25 @@
         <template slot-scope="{row}">
           <el-button size="mini"
                      type="info"
+                     @click="showReturn('detail',row)"
+                     v-if="row.status == 'return'">
+            退回原因
+          </el-button>
+          <el-button size="mini"
+                     type="info"
                      @click="showTmpDialog(row)"
                      v-if="row.status == 'published'">
             处理
           </el-button>
           <el-button size="mini"
                      type="danger"
-                     @click="modifyStatus('return',row)"
-                     v-if="row.status != 'finish'">
+                     @click="showReturn('add',row)"
+                     v-if="row.status == 'published'">
             退回
           </el-button>
           <el-button size="mini"
                      type="success"
-                     @click="modifyStatus('finish',row)"
+                     @click="modifyStatus('finish',row.id)"
                      v-if="row.status == 'published'">
             完成
           </el-button>
@@ -183,7 +197,6 @@
 
         <el-form-item label="产品单价"
                       prop="product_price">
-
           <el-input v-model="tmp.product_price"
                     class="small_input"
                     v-money:2 />
@@ -191,7 +204,8 @@
         <el-form-item label="需预付款"
                       prop="pre_pay">
           <el-input v-model="tmp.pre_pay"
-                    class="small_input" />
+                    class="small_input"
+                    v-money:2 />
         </el-form-item>
         <el-form-item label="产品货期"
                       prop="product_date">
@@ -203,6 +217,7 @@
             <el-upload class="upload-demo"
                        action="uploadFile"
                        :before-upload="(file) => beforeUpload(file, 'pre_sale')"
+                       :on-remove="handleRemove"
                        :file-list="fileList">
               <el-button size="small"
                          type="primary">点击上传</el-button>
@@ -398,16 +413,19 @@
         </el-form-item>
         <el-form-item label="产品总价"
                       prop="total_pay">
-          <el-input v-model="order.total_pay" />
+          <el-input v-model="order.total_pay"
+                    v-money:2 />
         </el-form-item>
         <el-form-item label="总预付款"
                       prop="total_pay">
-          <el-input v-model="order.total_pre_pay" />
+          <el-input v-model="order.total_pre_pay"
+                    v-money:2 />
         </el-form-item>
 
         <el-form-item label="附件">
           <el-upload action="uploadFile"
                      :before-upload="(file) => beforeUpload(file, 'order')"
+                     :on-remove="handleRemoveFile"
                      :file-list="orderList">
             <el-button size="small"
                        type="primary"
@@ -426,6 +444,34 @@
         </el-button>
         <el-button type="primary"
                    @click="addOrder()">
+          确认
+        </el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="退回原因"
+               :visible.sync="showReturnReasonDialog"
+               width="30%">
+      <el-form ref="closeForm"
+               :model="closeForm"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="退回原因">
+          <el-input v-model="closeForm.return_reason"
+                    type="textarea"
+                    :disabled="showReturnReasonAction !='add'"
+                    :rows="4" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="showReturnReasonDialog = false">
+          取消
+        </el-button>
+        <el-button type="primary"
+                   v-if="showReturnReasonAction =='add'"
+                   @click="modifyStatus('return', return_row)">
           确认
         </el-button>
       </div>
@@ -460,7 +506,8 @@ export default {
         el.onblur = (e) => {
           let a = el.value.replace(/,/g, '');  //去除‘，’
           if (a) {
-            el.value = parseFloat(el.value).toLocaleString('zh', { 'minimumFractionDigits': 2, 'maximumFractionDigits': 2 });
+            var r = parseFloat(a).toLocaleString('zh', { 'minimumFractionDigits': 2, 'maximumFractionDigits': 2 });
+            el.value = r
           }
         }
       },
@@ -469,11 +516,12 @@ export default {
   filters: {
     statusMap: (status) => { // msg表示要过滤的数据，a表示传入的参数
       var sta = {
-        published: 'primary',
+        change: "warning",
+        published: 'info',
         return: 'danger',
         finish: 'success',
       }
-      return sta.status
+      return sta[status]
     }
   },
   data () {
@@ -485,11 +533,17 @@ export default {
       dialogFormVisible: false,
       showApplication: false,
       showOrderDialog: false,
+      showReturnReasonDialog: false,
+      showReturnReasonAction: 'add',
       dialogAction: "update",
       application_detail: {
         sale_num: ""
       },
       statusOptions: [
+        {
+          name: "需求变更",
+          key: "change",
+        },
         {
           name: "处理",
           key: "published",
@@ -534,12 +588,17 @@ export default {
         sale_num: "",
         product_price: 0,
       },
+      closeForm: {
+        return_reason: ""
+      },
+      return_row: 0,
       order: {
         order_num: "",
         customer_name: "",
-        total_pay: "",
-        total_pre_pay: "",
+        total_pay: 0,
+        total_pre_pay: 0,
         items: [],
+        remark: "",
       },
       order_rules: {
         order_num: [{ required: true, message: '请填写名称', trigger: 'change' }],
@@ -563,9 +622,10 @@ export default {
         }
       })
     },
-    modifyStatus (status, row) {
-      var data = { 'status': status }
-      modifyPreSaleStatus(row.id, data).then(res => {
+    modifyStatus (status, row_id) {
+      var data = { 'status': status, 'return_reason': this.closeForm.return_reason }
+      modifyPreSaleStatus(row_id, data).then(res => {
+        this.showReturnReasonDialog = false;
         this.retrieve()
       })
     },
@@ -589,8 +649,8 @@ export default {
       this.getList()
     },
     showOrder () {
+      this.showOrderDialog = true
       this.$nextTick(() => {
-        this.showOrderDialog = true
         this.$refs['orderForm'].resetFields()
         this.orderList = []
       })
@@ -608,6 +668,12 @@ export default {
         this.tmp.product_price = this.tmp.product_price ? this.tmp.product_price : 0
         this.fileList = JSON.parse(JSON.stringify(row.uploads))
       })
+    },
+    handleRemove (file, fileList) {
+      this.fileList = fileList
+    },
+    handleRemoveFile (file, fileList) {
+      this.orderList = fileList
     },
     beforeUpload (file, type) {
       let fd = new FormData();
@@ -663,6 +729,18 @@ export default {
           type: 'success',
           duration: 2000
         })
+      })
+    },
+    showReturn (action, row) {
+      this.showReturnReasonDialog = true;
+      this.showReturnReasonAction = action;
+      this.$nextTick(() => {
+        this.$refs['closeForm'].resetFields()
+        if (action == "detail") {
+          this.closeForm.return_reason = row.return_reason
+        } else {
+          this.return_row = row.id
+        }
       })
     },
   }

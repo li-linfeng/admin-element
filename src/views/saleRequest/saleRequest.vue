@@ -261,6 +261,7 @@
             <el-upload class="upload-demo"
                        action="uploadFile"
                        :before-upload="beforeUpload"
+                       :on-remove="handleRemove"
                        :file-list="fileList">
               <el-button size="small"
                          type="primary"
@@ -310,7 +311,7 @@ export default {
         return: 'danger',
         finish: 'success',
       }
-      return sta.status
+      return sta[status]
     }
   },
   data () {
@@ -445,6 +446,9 @@ export default {
       getSaleRequestNum().then(res => {
         this.tmp.sale_num = res.data.uuid
       })
+    },
+    handleRemove (file, fileList) {
+      this.fileList = fileList
     },
     beforeUpload (file, fileList) {
       let fd = new FormData();
