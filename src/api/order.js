@@ -25,4 +25,11 @@ export function createOrder(data) {
   })
 }
 
+export function finishOrderItem(id) {
+  return request({
+    url: `/api/order_items/${id}/finish`,
+    method: 'post',
+  })
+}
+
 

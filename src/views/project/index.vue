@@ -93,7 +93,7 @@
                 style="margin-right:10px">
             <el-button type="primary"
                        size="mini"
-                       @click="showCloseDialog(row)">
+                       @click="showCloseDialog('add',row)">
               关闭丢单
             </el-button>
             <el-button v-if="row.status!='published'"
@@ -103,6 +103,12 @@
               关闭拿单
             </el-button>
           </span>
+          <el-button size="mini"
+                     type="info"
+                     @click="showCloseDialog('detail',row)"
+                     v-if="row.status == 'cancel'">
+            丢单原因
+          </el-button>
           <el-button size="mini"
                      type="danger"
                      @click="deleteData(row)">
@@ -175,6 +181,7 @@
                style="width: 400px; margin-left:50px;">
         <el-form-item label="丢单原因">
           <el-input v-model="closeForm.close_reason"
+                    :disabled="showCloseReasonAction =='detail'"
                     type="textarea"
                     :rows="4" />
         </el-form-item>
@@ -185,6 +192,7 @@
           取消
         </el-button>
         <el-button type="primary"
+                   :disabled="showCloseReasonAction =='detail'"
                    @click="handleModifyStatus(close_row_id, 'cancel')">
           确认
         </el-button>
@@ -216,6 +224,7 @@ export default {
       list: null,
       total: 0,
       showCloseReasonDialog: false,
+      showCloseReasonAction: 'add',
       closeForm: {
         close_reason: ""
       },
@@ -302,6 +311,7 @@ export default {
       updateProjectsStatus(id, data).then(res => {
         if (status == 'cancel') {
           this.$refs['closeForm'].resetFields()
+          this.showCloseReasonAction = 'add'
           this.showCloseReasonDialog = false
         }
         this.retrieve()
@@ -325,9 +335,13 @@ export default {
         this.retrieve()
       })
     },
-    showCloseDialog (row) {
+    showCloseDialog (action, row) {
       this.close_row_id = row.id
       this.showCloseReasonDialog = true
+      this.showCloseReasonAction = 'detail'
+      if (action == "detail") {
+        this.closeForm.close_reason = row.close_reason
+      }
     },
     cancelCloseReasonDialog () {
       this.close_row_id = 0

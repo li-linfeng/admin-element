@@ -81,7 +81,7 @@
 
       <el-table-column label="产品型号"
                        align="center"
-                       width="120">
+                       width="150">
         <template slot-scope="{row}">
           <span>{{row.product_type }}</span>
         </template>
@@ -110,7 +110,13 @@
           <span>{{row.product_date }}</span>
         </template>
       </el-table-column>
-
+      <el-table-column label="价格有效期"
+                       align="center"
+                       width="120">
+        <template slot-scope="{row}">
+          <span>{{row.expired_at }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="附件"
                        align="center"
                        width="200">
@@ -210,6 +216,11 @@
         <el-form-item label="产品货期"
                       prop="product_date">
           <el-input v-model="tmp.product_date"
+                    class="small_input" />
+        </el-form-item>
+        <el-form-item label="价格有效期"
+                      prop="expired_at">
+          <el-input v-model="tmp.expired_at"
                     class="small_input" />
         </el-form-item>
         <div style="width: 400px;margin-bottom: 20px;">
@@ -419,6 +430,7 @@
         <el-form-item label="总预付款"
                       prop="total_pay">
           <el-input v-model="order.total_pre_pay"
+                    v-bind:values="getTotalPrePay()"
                     v-money:2 />
         </el-form-item>
 
@@ -563,11 +575,11 @@ export default {
           "name": "需求编号",
         },
         {
-          "key": "sale_request.customer_type",
+          "key": "saleRequest.filter_customer_type",
           "name": "客户名称",
         },
         {
-          "key": "sale_request.product_type",
+          "key": "saleRequest.filter_product_type",
           "name": "产品性质",
         },
         {
@@ -587,6 +599,7 @@ export default {
       tmp: {
         sale_num: "",
         product_price: 0,
+        expired_at: "",
       },
       closeForm: {
         return_reason: ""
@@ -612,7 +625,33 @@ export default {
   created () {
     this.getList()
   },
+  watch: {
+    'order.items': {
+      handler (newVal, oldVal) {
+        var total = 0
+        var total_pre = 0
+        var i
+        for (i = 0; i < this.order.items.length; i++) {
+          if (this.order.items[i].count) {
+            var price, pre
+            price = this.order.items[i].product_price.replace(/,/g, '');
+            pre = this.order.items[i].pre_pay.replace(/,/g, '');
+            total = total + this.order.items[i].count * price
+            total_pre = total_pre + this.order.items[i].count * pre
+          }
+        }
+        this.order.total_pay = parseFloat(total).toLocaleString('zh', { 'minimumFractionDigits': 2, 'maximumFractionDigits': 2 })
+        this.order.total_pre_pay = parseFloat(total_pre).toLocaleString('zh', { 'minimumFractionDigits': 2, 'maximumFractionDigits': 2 })
+      }, 'deep': true
+    },
+  },
   methods: {
+    getTotalPay () {
+
+    },
+    getTotalPrePay () {
+      // console.log(222)
+    },
     getList () {
       return getPreSaleList(this.listQuery).then(response => {
         this.list = response.data
@@ -630,7 +669,7 @@ export default {
       })
     },
     canBeSelect (row) {
-      return row.order_id == 0
+      return row.status == 'finish'
     },
     handleItemsChange (val) {
       this.order.items = val

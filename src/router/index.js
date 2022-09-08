@@ -72,7 +72,7 @@ export const asyncRoutes = [
         path: 'category',
         component: () => import('@/views/category/category'),
         name: 'Category',
-        meta: { title: '分类', icon: 'el-icon-collection' , api:"api.categories"}
+        meta: { title: 'BOM池', icon: 'el-icon-collection' , api:"api.categories"}
       }
     ]
   },
