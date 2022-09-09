@@ -56,7 +56,7 @@
       </el-table-column>
       <el-table-column label="附件"
                        align="center"
-                       width="250">
+                       width="220">
         <template slot-scope="{row}">
           <div v-for="item in row.uploads"
                :key="item.name">
@@ -76,6 +76,13 @@
           <span>{{row.user.username }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="创建时间"
+                       align="center"
+                       width="160">
+        <template slot-scope="{row}">
+          <span>{{row.created_at }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="应用条件"
                        align="center"
                        width="80">
@@ -88,7 +95,7 @@
         </template>
       </el-table-column>
       <el-table-column label="状态"
-                       width="120"
+                       width="90"
                        align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusMap">
@@ -98,7 +105,7 @@
       </el-table-column>
       <el-table-column label="处理人"
                        align="center"
-                       width="120">
+                       width="90">
         <template slot-scope="{row}">
           <span>{{row.handler.username }}</span>
         </template>
@@ -151,7 +158,8 @@
         <el-form-item label="项目编号"
                       prop="project_id">
           <el-input v-model="tmp.project_id"
-                    class="small_input" />
+                    class="small_input"
+                    :disabled="editable[dialogAction]" />
         </el-form-item>
         <el-form-item label="产品类型"
                       prop="product_type">
@@ -260,6 +268,7 @@
           <el-form-item label="附件">
             <el-upload class="upload-demo"
                        action="uploadFile"
+                       :disabled="editable[dialogAction]"
                        :before-upload="beforeUpload"
                        :on-remove="handleRemove"
                        :file-list="fileList">

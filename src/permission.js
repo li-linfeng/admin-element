@@ -25,6 +25,7 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
+
       const hasRoutes = store.getters.permission_routes.length > 0
       if (hasRoutes){
         next()

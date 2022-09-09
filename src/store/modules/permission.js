@@ -38,7 +38,11 @@ const mutations = {
  SET_ROUTES: (state, routes) => {
   state.addRoutes = routes // 路由访问
   state.routes = constantRoutes.concat(routes) // 菜单显示
+  },
+  RESET_ROUTER: (state, routes) => {
+    state.routes = []
   }
+
 }
 
 const actions = {
