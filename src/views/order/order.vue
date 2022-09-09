@@ -207,7 +207,9 @@ export default {
       listQuery: {
         page: 1,
         per_page: 10,
-        filter_name: "",
+        filter_col: "",
+        filter_val: "",
+        filter_status: "",
       },
       tmp: {
         name: "",

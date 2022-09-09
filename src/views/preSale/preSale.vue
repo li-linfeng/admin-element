@@ -116,6 +116,7 @@
         <template slot-scope="{row}">
           <span>{{row.expired_at }}</span>
         </template>
+
       </el-table-column>
       <el-table-column label="附件"
                        align="center"
@@ -185,6 +186,7 @@
                :visible.sync="dialogFormVisible">
       <el-form ref="dataForm"
                :model="tmp"
+               :rules="tmp_rules"
                label-position="left"
                label-width="140px"
                style="width:1200px; height:500px;margin-left:50px;">
@@ -220,8 +222,12 @@
         </el-form-item>
         <el-form-item label="价格有效期"
                       prop="expired_at">
-          <el-input v-model="tmp.expired_at"
-                    class="small_input" />
+
+          <el-date-picker v-model="tmp.expired_at"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="选择日期">
+          </el-date-picker>
         </el-form-item>
         <div style="width: 400px;margin-bottom: 20px;">
           <el-form-item label="附件">
@@ -593,7 +599,8 @@ export default {
       listQuery: {
         page: 1,
         per_page: 10,
-        filter_name: "",
+        filter_col: "",
+        filter_val: "",
         filter_status: "",
       },
       tmp: {
@@ -612,6 +619,12 @@ export default {
         total_pre_pay: 0,
         items: [],
         remark: "",
+      },
+      tmp_rules: {
+        product_type: [{ required: true, message: '请输入产品型号', trigger: 'blur' }],
+        product_price: [{ required: true, message: '请输入产品单价', trigger: 'blur' }],
+        pre_pay: [{ required: true, message: '请输入预付款', trigger: 'blur' }],
+        product_date: [{ required: true, message: '请输入产品货期', trigger: 'blur' }],
       },
       order_rules: {
         order_num: [{ required: true, message: '请填写名称', trigger: 'change' }],
