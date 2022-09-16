@@ -283,16 +283,6 @@ export default {
       },
     }
   },
-  mounted () {
-    console.log(555)
-  },
-  beforeMount () {
-    console.log(4444)
-  },
-  created () {
-    console.log(333333)
-    this.getList()
-  },
   methods: {
     getList () {
       return getProjectList(this.listQuery).then(response => {

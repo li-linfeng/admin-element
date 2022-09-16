@@ -65,14 +65,14 @@ export const constantRoutes = [
 
 export const asyncRoutes = [
   {
-    path: '/category',
+    path: '/material',
     component: Layout,
     children: [
       {
         path: 'category',
-        component: () => import('@/views/category/category'),
+        component: () => import('@/views/material/index'),
         name: 'Category',
-        meta: { title: 'BOM池', icon: 'el-icon-collection' , api:"api.categories"}
+        meta: { title: 'BOM池', icon: 'el-icon-collection' , api:"api.materials"}
       }
     ]
   },

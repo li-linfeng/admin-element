@@ -21,6 +21,13 @@
           <span>{{row.order.order_num }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="创建时间"
+                       align="center"
+                       width="190">
+        <template slot-scope="{row}">
+          <span>{{row.order.created_at }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="订单总价"
                        align="center"
                        width="130">
@@ -120,6 +127,26 @@
           <span>{{row.order.remark}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="物料编号"
+                       align="center"
+                       width="200">
+        <template slot-scope="{row}">
+          <span>{{row.order.material_number}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Boom&图纸"
+                       align="center"
+                       width="200">
+        <template slot-scope="{row}">
+          <span>{{row.order.boom ?row.order.boom.name: ""}}</span>
+          <el-link :underline="false"
+                   icon="el-icon-download"
+                   :href="row.order.boom.url"
+                   v-if="row.order.boom.name"
+                   type="primary"
+                   download>下载</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="状态"
                        width="200"
                        align="center">
@@ -131,17 +158,55 @@
       </el-table-column>
       <el-table-column label="操作"
                        align="center"
-                       class-name="small-padding fixed-width">
+                       width="250"
+                       class-name="small-padding ">
         <template slot-scope="{row}">
           <el-button size="mini"
-                     type="success"
+                     type="primary"
+                     v-if="row.status == 'open'"
+                     @click="search(row)">
+            查询
+          </el-button>
+          <el-button size="mini"
+                     type="info"
                      v-if="row.status == 'open'"
                      @click="finishItem(row)">
             处理
           </el-button>
+          <el-button size="mini"
+                     type="success"
+                     v-if="row.status == 'open'"
+                     @click="finishItem(row)">
+            完成
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog title="物料编号"
+               :visible.sync="showNumberDialog"
+               width="30%">
+      <el-form ref="numForm"
+               :model="numForm"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="物料编号">
+          <el-input v-model="numForm.material_number"
+                    class="small_input" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="showReturnReasonDialog = false">
+          取消
+        </el-button>
+        <el-button type="primary"
+                   @click="addNumber()">
+          确认
+        </el-button>
+      </div>
+    </el-dialog>
 
     <pagination v-show="total>0"
                 :total="total"
@@ -175,6 +240,7 @@ export default {
       description: "",
       total: 0,
       dialogFormVisible: false,
+      showNumberDialog: false,
       dialogAction: "add",
       statusOptions: [
         {
@@ -215,6 +281,9 @@ export default {
         name: "",
         description: '',
       },
+      numForm: {
+        material_number: ""
+      },
       rules: {
         name: [{ required: true, message: '请填写名称', trigger: 'change' }],
         description: [{ required: true, message: '请填写描述', trigger: 'blur' }],
@@ -226,7 +295,7 @@ export default {
   },
   methods: {
     arraySpanMethod ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex <= 2 || (columnIndex >= 12 & columnIndex <= 14)) {
+      if (columnIndex <= 3 || (columnIndex >= 13 & columnIndex <= 15)) {
         if (row.is_start) {
           return [row.order.order_items_count, 1];
         } else {
@@ -253,6 +322,10 @@ export default {
         this.retrieve()
       })
     },
+    search (row) {
+
+    },
+    addNumber () { },
     retrieve () {
       this.getList().then(res => {
         this.dialogFormVisible = false
