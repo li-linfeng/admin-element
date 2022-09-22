@@ -131,20 +131,19 @@
                        align="center"
                        width="200">
         <template slot-scope="{row}">
-          <span>{{row.order.material_number}}</span>
+          <span>{{row.material_number}}</span>
         </template>
       </el-table-column>
       <el-table-column label="Boom&图纸"
                        align="center"
                        width="200">
         <template slot-scope="{row}">
-          <span>{{row.order.boom ?row.order.boom.name: ""}}</span>
-          <el-link :underline="false"
-                   icon="el-icon-download"
-                   :href="row.order.boom.url"
-                   v-if="row.order.boom.name"
-                   type="primary"
-                   download>下载</el-link>
+          <el-button size="mini"
+                     type="primary"
+                     :disabled="row.material_number ==''"
+                     @click="download(row)">
+            下载
+          </el-button>
         </template>
       </el-table-column>
       <el-table-column label="状态"
@@ -170,7 +169,7 @@
           <el-button size="mini"
                      type="info"
                      v-if="row.status == 'open'"
-                     @click="finishItem(row)">
+                     @click="bindMaterial(row)">
             处理
           </el-button>
           <el-button size="mini"
@@ -198,7 +197,7 @@
       </el-form>
       <div slot="footer"
            class="dialog-footer">
-        <el-button @click="showReturnReasonDialog = false">
+        <el-button @click="showNumberDialog = false">
           取消
         </el-button>
         <el-button type="primary"
@@ -218,7 +217,7 @@
 </template>
 
 <script>
-import { getOrderList, finishOrderItem } from '@/api/order'
+import { getOrderList, finishOrderItem, bindMaterialNum } from '@/api/order'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import QueryCol from '@/components/QueryCol'
 
@@ -282,6 +281,7 @@ export default {
         description: '',
       },
       numForm: {
+        item_id: 0,
         material_number: ""
       },
       rules: {
@@ -294,6 +294,11 @@ export default {
     this.getList()
   },
   methods: {
+    bindMaterial (row) {
+      this.showNumberDialog = true
+      this.numForm.material_number = ''
+      this.numForm.item_id = row.id
+    },
     arraySpanMethod ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex <= 3 || (columnIndex >= 13 & columnIndex <= 15)) {
         if (row.is_start) {
@@ -323,9 +328,19 @@ export default {
       })
     },
     search (row) {
-
+      let routeData = this.$router.resolve({
+        path: '/material/category',
+        query: { category_name: row.sale_request.product_type }
+      });
+      window.open(routeData.href, '_blank');
     },
-    addNumber () { },
+    download () { },
+    addNumber () {
+      bindMaterialNum(this.numForm.item_id, this.numForm).then(res => {
+        this.showNumberDialog = false
+        this.retrieve()
+      })
+    },
     retrieve () {
       this.getList().then(res => {
         this.dialogFormVisible = false

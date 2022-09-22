@@ -2,21 +2,12 @@
   <div class="cate-div">
     <div class="filter-container"
          style="margin-bottom: 20px;">
-      <span>产品名称</span>
-      <el-input v-model="listQuery.filter_val"
-                placeholder="输入搜索内容"
-                style="width:100px; margin-left:10px ;margin-right: 10px;"
-                class="filter-item"
-                @keyup.enter.native="search" />
+      <QueryCol :cols="cols"
+                :filter_col="listQuery.filter_col"
+                :filter_val="listQuery.filter_val"
+                @handleFilter="handleFilter" />
 
-      <el-button class="filter-item"
-                 type="primary"
-                 icon="el-icon-search"
-                 @click="handleFilter">
-        搜索
-      </el-button>
     </div>
-
     <el-table class="cate-table"
               :data="data"
               style="width: 100%;margin-bottom: 20px;"
@@ -38,7 +29,7 @@
       </el-table-column>
 
       <el-table-column align="center"
-                       label="分类名"
+                       label="名称"
                        width="300">
         <template slot-scope="{row}">
           <div slot="reference"
@@ -165,11 +156,13 @@
 <script>
 import { getMaterialTreeList, bindMaterial } from '@/api/material'
 import { getCategoryList } from '@/api/category'
+
 import Material from '@/components/Material' // secondary package based on el-pagination
+import QueryCol from '@/components/QueryCol' // secondary package based on el-pagination
 
 export default {
   name: "MaterialIndex",
-  components: { Material },
+  components: { Material, QueryCol },
   filters: {
     typesMap: (type) => { // msg表示要过滤的数据，a表示传入的参数
       var ty = {
@@ -213,6 +206,20 @@ export default {
         material_id: 0,
         children: [],
       },
+      cols: [
+        {
+          "key": "name",
+          "name": "分类名",
+        },
+        {
+          "key": "children.filter_label",
+          "name": "物料名称",
+        },
+        {
+          "key": "children.filter_description",
+          "name": "物料描述",
+        },
+      ],
     }
   },
   watch: {
@@ -228,19 +235,14 @@ export default {
     }
   },
   created () {
+    this.listQuery.page = 1
+    if (this.$route.query.category_name) {
+      this.listQuery.filter_col = 'name'
+      this.listQuery.filter_val = this.$route.query.category_name
+    }
     this.getList()
   },
   methods: {
-    // parseType (row) {
-    //   type_maps
-
-
-    //   if (row.type == 'category') {
-    //     return ""
-    //   } else {
-    //     return
-    //   }
-    // },
     getTreeData () {
       var params = {
         filter_category_id: this.category_id,
@@ -296,8 +298,10 @@ export default {
         }
       })
     },
-    handleFilter () {
+    handleFilter (params) {
       this.listQuery.page = 1
+      this.listQuery.filter_col = params.col ? params.col : ""
+      this.listQuery.filter_val = params.val ? params.val : ""
       this.getList()
     },
     retrieve () {

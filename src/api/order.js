@@ -33,3 +33,12 @@ export function finishOrderItem(id) {
 }
 
 
+export function bindMaterialNum(id, data) {
+  return request({
+    url: `/api/order_items/${id}/bind`,
+    method: 'post',
+    data
+  })
+}
+
+

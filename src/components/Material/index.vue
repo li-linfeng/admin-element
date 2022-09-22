@@ -200,7 +200,7 @@ export default {
       let fd = new FormData();
       fd.append('file', file);//传文件
       fd.append('type', 'file');//传文件
-      fd.append('source_type', this.material.type);//传文件
+      fd.append('source_type', 'material');//传文件
       uploadFile(fd).then(res => {
         this.fileList.push(res.data)
       })

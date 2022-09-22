@@ -5,7 +5,7 @@
                placeholder="搜索字段"
                clearable
                class="filter-item"
-               style="width: 130px">
+               style="width: 130px; margin-right: 10px;">
       <el-option v-for="item in cols"
                  :key="item.key"
                  :label="item.name"
@@ -13,10 +13,11 @@
     </el-select>
     <el-input v-model="val"
               placeholder="输入搜索内容"
-              style="width:200px;"
+              style="width:200px;  margin-right: 10px;"
               class="filter-item"
               @keyup.enter.native="search" />
     <el-select v-model="sta"
+               v-if="status.length >0"
                placeholder="状态"
                clearable
                class="filter-item"
