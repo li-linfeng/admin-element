@@ -20,7 +20,7 @@
     <el-table class="cate-table"
               :data="data"
               style="width: 100%;margin-bottom: 20px;"
-              row-key="id"
+              row-key="key"
               border
               stripe
               fit
@@ -31,24 +31,35 @@
                        prop="id"
                        label="编号"
                        sortable
-                       width="300">
+                       width="100">
+        <template slot-scope="{row}">
+          <span>{{row.type =='category' ? row.id : ''  }}</span>
+        </template>
       </el-table-column>
 
       <el-table-column align="center"
                        label="分类名"
                        width="300">
-        <template slot-scope="scope">
+        <template slot-scope="{row}">
           <div slot="reference"
                class="name-wrapper">
-            <el-tag size="medium">{{ scope.row.name}}</el-tag>
+            <el-tag :type="row.type | colorsMap"
+                    size="medium">{{ row.name}}</el-tag>
           </div>
+        </template>
+      </el-table-column>
+      <el-table-column align="center"
+                       label="物料类型"
+                       width="300">
+        <template slot-scope="{row}">
+          {{ row.type | typesMap}}
         </template>
       </el-table-column>
       <el-table-column align="center"
                        label="描述"
                        width="300">
-        <template slot-scope="scope">
-          {{ scope.row.description}}
+        <template slot-scope="{row}">
+          {{ row.description}}
         </template>
       </el-table-column>
 
@@ -58,121 +69,223 @@
         <template slot-scope="{row}">
           <el-button size="mini"
                      type="success"
-                     @click="showAddMaterialDialog(row)">
-            添加产品
+                     v-if="row.code == 'XX'"
+                     @click="showAddMaterialDialog('component',row)">
+            添加零件
           </el-button>
           <el-button size="mini"
-                     type="danger"
-                     v-if="row.parent_id >0"
-                     @click="remove(row)">
-            删除
+                     type="success"
+                     v-if="row.type != 'category' && row.has_child >0 && row.status == 0"
+                     @click="showChoose('assembly',row)">
+            选择子组件
+          </el-button>
+          <el-button size="mini"
+                     type="success"
+                     v-if="row.code != 'XX' && row.type == 'category'"
+                     @click="showAddMaterialDialog( 'category',row)">
+            添加产品
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog :visible.sync="dialogFormVisible">
-      <el-form ref="material"
-               :rules="rules"
-               :model="material"
-               label-position="left"
-               label-width="120px"
-               style="width: 400px; margin-left:50px;">
-        <el-form-item label="物料类型"
-                      prop="type">
-          <el-select v-model="material.type"
-                     placeholder="请选择">
-            <el-option v-for="item in material_types"
-                       :key="item.key"
-                       :label="item.key"
-                       :value="item.val">
-            </el-option>
-          </el-select>
-        </el-form-item>
+    <material :category="category"
+              :dialogType="dialogType"
+              :need_refresh.sync="need_refresh"
+              :visible.sync="dialogFormVisible"
+              ref="material">
+    </material>
 
-        <el-form-item label="物料编号"
-                      prop="label">
-          <el-input v-model="material.label"
-                    class="small_input" />
+    <el-dialog :visible="showChooseDialog"
+               @close="showChooseDialog = false"
+               title="选择子组件">
+      <el-container>
+        <el-header>
           <el-button type="primary"
-                     @click="getMaterialLabel"
-                     style="float:left; margin-left:20px ;">获取编码</el-button>
-        </el-form-item>
-      </el-form>
+                     style="float:right"
+                     @click="showAddMaterialDialog('assembly')">
+            添加子组件
+          </el-button>
+        </el-header>
+        <el-main>
+          <el-form ref="combineForm"
+                   :model="combine"
+                   label-position="left"
+                   label-width="120px"
+                   style="width: 400px; margin-left:50px;">
+            <el-form-item label="搜索">
+              <el-input placeholder="输入关键字进行过滤"
+                        v-model="filterText">
+              </el-input>
+              <el-tree :data="tree"
+                       :check-strictly="true"
+                       show-checkbox
+                       node-key="label"
+                       :default-expand-all="true"
+                       @check-change="checkChange"
+                       :filter-node-method="filterNode"
+                       :expand-on-click-node="false"
+                       style="margin-top:20px"
+                       ref="tree">
+                <span class="custom-tree-node"
+                      slot-scope="{ node }">
+                  <span>{{ node.label }}</span>
+                </span>
+              </el-tree>
+            </el-form-item>
+            <div v-if="combine.children.length >0">
+              <el-form-item :label="'物料' + (index*1+1) + '数量'"
+                            v-for="(node, index) in combine.children"
+                            :key="node.label">
+                <span style="padding:10px; float: left; line-height: 25px;margin-right:20px;">{{combine.children[index].label}}</span>
+                <el-input-number v-model="combine.children[index].amount"
+                                 class="small_input el-item">
+                </el-input-number>
+
+              </el-form-item>
+            </div>
+          </el-form>
+        </el-main>
+
+      </el-container>
       <div slot="footer"
            class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
+        <el-button @click="showChooseDialog = false">
           取消
         </el-button>
         <el-button type="primary"
-                   @click="() => add()">
+                   @click="bindRel()">
           确认
         </el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
-import { getMaterialTreeList, addMaterial, deleteMaterial, getMaterialSeq } from '@/api/material'
+import { getMaterialTreeList, bindMaterial } from '@/api/material'
 import { getCategoryList } from '@/api/category'
+import Material from '@/components/Material' // secondary package based on el-pagination
+
 export default {
   name: "MaterialIndex",
+  components: { Material },
+  filters: {
+    typesMap: (type) => { // msg表示要过滤的数据，a表示传入的参数
+      var ty = {
+        'category': "",
+        'assembly': '装配体',
+        'sub-assembly': '子装配体',
+        'component': '零件',
+        'single-component': '公用零件',
+      }
+      return ty[type]
+    },
+    colorsMap: (type) => {
+      var colors = {
+        'category': "success",
+        'assembly': 'primary',
+        'sub-assembly': 'info',
+        'component': 'warning',
+        'single-component': 'danger',
+      }
+      return colors[type]
+    }
+  },
   data () {
     return {
+      tree: [],
+      filterText: '',
+      category_id: 0,
+      category: null,
+      need_refresh: false,
+      showChooseDialog: false,
       data: [],
       dialogFormVisible: false,
+      dialogType: 'category',
       listQuery: {
         page: 1,
         per_page: 10,
         filter_col: "",
         filter_val: "",
       },
-      material_types: [
-        { "key": "sub-assembly", "val": "assembly" },
-        { "key": "component", "val": "component" },
-        { "key": "assembly", "val": "assembly" },
-      ],
-      material: {
-        category_id: 0,
-        type: '',
-        seq: "",
-        label: "",
+      combine: {
+        material_id: 0,
+        children: [],
       },
-      rules: {},
+    }
+  },
+  watch: {
+    need_refresh: {
+      handler (newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.getTreeData()
+        }
+      },
+    },
+    filterText (val) {
+      this.$refs.tree.filter(val);
     }
   },
   created () {
     this.getList()
   },
   methods: {
-    showAddMaterialDialog (row) {
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['material'].resetFields()
-        this.material.category_id = row.id
-      })
-    },
-    getMaterialLabel () {
-      var data = {
-        'category_id': this.category_id
-      }
-      getMaterialSeq(data).then(res => {
-        this.material.label = res.data.label
-        this.material.seq = res.data.seq
-        this.material.id = res.data.id
-      })
-    },
-    addMaterial () {
-      this.$refs['category'].validate((valid) => {
-        if (valid) {
-          addMaterial(this.category).then(response => {
-            this.retrieve()
-          })
-        }
-      });
+    // parseType (row) {
+    //   type_maps
 
+
+    //   if (row.type == 'category') {
+    //     return ""
+    //   } else {
+    //     return
+    //   }
+    // },
+    getTreeData () {
+      var params = {
+        filter_category_id: this.category_id,
+        material_id: this.combine.material_id,
+      }
+      return getMaterialTreeList(params).then(response => {
+        this.tree = response.data.tree
+        this.category = response.data.category
+      })
+    },
+    showChoose (type, row) {
+      this.showChooseDialog = true
+      this.category_id = row.category_id
+      this.combine.material_id = row.id
+      this.dialogType = type
+      this.$nextTick(() => {
+        this.$refs['combineForm'].resetFields()
+        this.getTreeData()
+      })
+    },
+    filterNode (value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    checkChange (node, checked, c) {
+      if (node.id > 0) {
+        if (checked) {
+          var child = {
+            id: node.id,
+            label: node.label,
+            amount: 1,
+          }
+          this.combine.children.push(child)
+        } else {
+          var index = this.combine.children.map(e => e.id).indexOf(node.id)
+          this.combine.children.splice(index, 1)
+        }
+      }
+    },
+    showAddMaterialDialog (type, row = null) {
+      this.dialogType = type
+      this.dialogFormVisible = true
+      if (row) {
+        this.category = JSON.parse(JSON.stringify(row))
+      }
     },
     getList () {
       return getCategoryList(this.listQuery).then(response => {
@@ -187,11 +300,6 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    delCate (id) {
-      deleteMaterial(id).then(response => {
-        this.retrieve()
-      })
-    },
     retrieve () {
       this.getList().then(res => {
         this.dialogFormVisible = false
@@ -203,6 +311,20 @@ export default {
         })
       })
     },
+    bindRel () {
+      if (this.combine.children.length == 0) {
+        this.$message({
+          showClose: true,
+          message: '请选择子物料',
+          type: 'error'
+        });
+        return
+      }
+      bindMaterial(this.combine.material_id, this.combine).then(res => {
+        this.showChooseDialog = false
+        this.retrieve()
+      })
+    }
   }
 }
 </script>
@@ -211,5 +333,10 @@ export default {
 .cate-div {
   max-width: 1200px;
   margin: 100px auto;
+}
+
+.small_input {
+  float: left;
+  width: 43%;
 }
 </style>
