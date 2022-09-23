@@ -31,7 +31,8 @@ export function filterAsyncRoutes(routes, permissions) {
 
 const state = {
  routes: [],
- addRoutes: []
+ addRoutes: [],
+ permissions:[],
 }
 
 const mutations = {
@@ -41,6 +42,9 @@ const mutations = {
   },
   RESET_ROUTER: (state, routes) => {
     state.routes = []
+  },
+  SET_PERMISSIONS: (state, permissions)=>{
+    state.permissions = permissions
   }
 
 }
@@ -57,6 +61,7 @@ const actions = {
           accessedRoute = filterAsyncRoutes(asyncRoutes, permissionsData.data) // 对路由格式进行处理
         }
         commit('SET_ROUTES', accessedRoute)
+        commit('SET_PERMISSIONS', permissionsData.data)
         resolve(accessedRoute)
     })
   },

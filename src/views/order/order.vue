@@ -102,7 +102,9 @@
                        align="center"
                        width="80">
         <template slot-scope="{row}">
-          <span></span>
+          <span>
+            {{row.handler?row.handler.username :""}}
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="附件"
@@ -138,12 +140,16 @@
                        align="center"
                        width="200">
         <template slot-scope="{row}">
-          <el-button size="mini"
+          <el-button :loading="downloadLoading"
+                     size="mini"
+                     style="margin:0 0 20px 20px;"
                      type="primary"
                      :disabled="row.material_number ==''"
-                     @click="download(row)">
+                     icon="el-icon-document"
+                     @click="handleDownload(row)">
             下载
           </el-button>
+
         </template>
       </el-table-column>
       <el-table-column label="状态"
@@ -217,9 +223,10 @@
 </template>
 
 <script>
-import { getOrderList, finishOrderItem, bindMaterialNum } from '@/api/order'
+import { getOrderList, finishOrderItem, bindMaterialNum, downloadMaterial } from '@/api/order'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import QueryCol from '@/components/QueryCol'
+import { downloadBlob } from '@/utils/help'
 
 export default {
   name: 'OrderIndex',
@@ -239,6 +246,7 @@ export default {
       description: "",
       total: 0,
       dialogFormVisible: false,
+      downloadLoading: false,
       showNumberDialog: false,
       dialogAction: "add",
       statusOptions: [
@@ -300,7 +308,7 @@ export default {
       this.numForm.item_id = row.id
     },
     arraySpanMethod ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex <= 3 || (columnIndex >= 13 & columnIndex <= 15)) {
+      if (columnIndex <= 3 || (columnIndex >= 13 & columnIndex <= 14)) {
         if (row.is_start) {
           return [row.order.order_items_count, 1];
         } else {
@@ -334,7 +342,17 @@ export default {
       });
       window.open(routeData.href, '_blank');
     },
-    download () { },
+    handleDownload (row) {
+      this.downloadLoading = true
+      downloadMaterial(row.id).then((res) => {
+        const type = 'application/zip';
+        const name = `${row.material_number}.zip`;
+        downloadBlob(res, type, name);
+      })
+        .finally(() => {
+          this.downloadLoading = false
+        });
+    },
     addNumber () {
       bindMaterialNum(this.numForm.item_id, this.numForm).then(res => {
         this.showNumberDialog = false

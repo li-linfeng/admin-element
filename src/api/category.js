@@ -9,3 +9,10 @@ export function getCategoryList(query) {
 }
 
 
+export function addHandler(id,params) {
+  return request({
+    url: `/api/categories/${id}/handler`,
+    method: 'post',
+    params
+  })
+}

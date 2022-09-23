@@ -42,3 +42,10 @@ export function bindMaterialNum(id, data) {
 }
 
 
+export function downloadMaterial(id) {
+  return request({
+    url: `/api/order_items/${id}/download`,
+    method: 'get',
+    responseType: "blob",
+  })
+}

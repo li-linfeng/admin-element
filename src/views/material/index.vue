@@ -30,7 +30,7 @@
 
       <el-table-column align="center"
                        label="名称"
-                       width="300">
+                       width="200">
         <template slot-scope="{row}">
           <div slot="reference"
                class="name-wrapper">
@@ -41,11 +41,19 @@
       </el-table-column>
       <el-table-column align="center"
                        label="物料类型"
-                       width="300">
+                       width="200">
         <template slot-scope="{row}">
           {{ row.type | typesMap}}
         </template>
       </el-table-column>
+      <el-table-column align="center"
+                       label="工程处理人"
+                       width="100">
+        <template slot-scope="{row}">
+          {{ row.handler ?  row.handler.username :''}}
+        </template>
+      </el-table-column>
+
       <el-table-column align="center"
                        label="描述"
                        width="300">
@@ -59,22 +67,28 @@
                        class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="mini"
-                     type="success"
+                     type="warning"
                      v-if="row.code == 'XX'"
                      @click="showAddMaterialDialog('component',row)">
             添加零件
           </el-button>
           <el-button size="mini"
                      type="success"
-                     v-if="row.type != 'category' && row.has_child >0 && row.status == 0"
+                     v-if="row.type != 'category' && row.has_child >0"
                      @click="showChoose('assembly',row)">
             选择子组件
           </el-button>
           <el-button size="mini"
-                     type="success"
+                     type="primary"
                      v-if="row.code != 'XX' && row.type == 'category'"
                      @click="showAddMaterialDialog( 'category',row)">
             添加产品
+          </el-button>
+          <el-button size="mini"
+                     type="primary"
+                     v-if="row.code != 'XX' && row.type == 'category' && permissions.indexOf('*') !== -1 "
+                     @click="showAddHandlerDialog(row)">
+            设置处理人
           </el-button>
         </template>
       </el-table-column>
@@ -150,19 +164,62 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="处理人"
+               :visible.sync="handlerDialogVisible"
+               width="30%">
+      <el-form ref="handlerForm"
+               :model="handlerForm"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="处理人">
+          <el-select v-model="handlerForm.handler_id"
+                     filterable
+                     remote
+                     reserve-keyword
+                     placeholder="请输入邮箱或者用户名"
+                     :remote-method="searchUser"
+                     :loading="loading">
+            <el-option v-for="item in options"
+                       :key="item.id"
+                       :label="item.username"
+                       :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="handlerDialogVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary"
+                   @click="bindHandler">
+          确认
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getMaterialTreeList, bindMaterial } from '@/api/material'
-import { getCategoryList } from '@/api/category'
+import { getCategoryList, addHandler } from '@/api/category'
+import { searchUserList } from '@/api/user'
 
 import Material from '@/components/Material' // secondary package based on el-pagination
 import QueryCol from '@/components/QueryCol' // secondary package based on el-pagination
+import { mapGetters } from 'vuex'
 
 export default {
   name: "MaterialIndex",
   components: { Material, QueryCol },
+  computed: {
+    ...mapGetters([
+      'permissions',
+    ]),
+  },
   filters: {
     typesMap: (type) => { // msg表示要过滤的数据，a表示传入的参数
       var ty = {
@@ -187,6 +244,8 @@ export default {
   },
   data () {
     return {
+      options: [],
+      loading: false,
       tree: [],
       filterText: '',
       category_id: 0,
@@ -195,6 +254,7 @@ export default {
       showChooseDialog: false,
       data: [],
       dialogFormVisible: false,
+      handlerDialogVisible: false,
       dialogType: 'category',
       listQuery: {
         page: 1,
@@ -220,6 +280,10 @@ export default {
           "name": "物料描述",
         },
       ],
+      handlerForm: {
+        handler_id: '',
+        category_id: 0,
+      },
     }
   },
   watch: {
@@ -243,6 +307,28 @@ export default {
     this.getList()
   },
   methods: {
+    showAddHandlerDialog (row) {
+      this.$nextTick(() => {
+        this.handlerForm = {
+          handler_id: '',
+          category_id: row.id,
+        }
+        this.handlerDialogVisible = true
+        this.searchUser()
+      })
+    },
+    searchUser (query) {
+      searchUserList({ keyword: query }).then(res => {
+        this.options = res.data
+      })
+    },
+    bindHandler () {
+      addHandler(this.handlerForm.category_id, this.handlerForm).then(res => {
+        this.handlerDialogVisible = false
+        this.retrieve()
+      })
+
+    },
     getTreeData () {
       var params = {
         filter_category_id: this.category_id,
@@ -256,11 +342,18 @@ export default {
     showChoose (type, row) {
       this.showChooseDialog = true
       this.category_id = row.category_id
-      this.combine.material_id = row.id
       this.dialogType = type
+      var tmp = JSON.parse(JSON.stringify(row))
       this.$nextTick(() => {
         this.$refs['combineForm'].resetFields()
+        this.combine.material_id = tmp.id
+        this.combine.children = tmp.children
         this.getTreeData()
+        var keys = []
+        for (var i = 0; i < tmp.children.length; i++) {
+          keys.push(tmp.children[i].label)
+        }
+        this.$refs.tree.setCheckedKeys(keys);
       })
     },
     filterNode (value, data) {

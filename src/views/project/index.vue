@@ -338,9 +338,11 @@ export default {
     showCloseDialog (action, row) {
       this.close_row_id = row.id
       this.showCloseReasonDialog = true
-      this.showCloseReasonAction = 'detail'
+      this.showCloseReasonAction = action
       if (action == "detail") {
         this.closeForm.close_reason = row.close_reason
+      } else {
+        this.closeForm.close_reason = ''
       }
     },
     cancelCloseReasonDialog () {

@@ -16,6 +16,14 @@ export function getInfo(token) {
   })
 }
 
+export function searchUserList(query) {
+  return request({
+    url: '/api/user_list',
+    method: 'get',
+    params: query
+  })
+}
+
 
 export function getUserList(query) {
   return request({

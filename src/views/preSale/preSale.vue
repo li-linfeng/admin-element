@@ -68,14 +68,14 @@
                        align="center"
                        width="100">
         <template slot-scope="{row}">
-          <span>{{row.sale_request.user?row.sale_request.user.username :""}}</span>
+          <span>{{row.user.username }}</span>
         </template>
       </el-table-column>
       <el-table-column label="处理人"
                        align="center"
                        width="100">
         <template slot-scope="{row}">
-          <span>{{row.sale_request.handler?row.sale_request.handler.username :""}}</span>
+          <span>{{row.handler ? row.handler.username:""}}</span>
         </template>
       </el-table-column>
 
