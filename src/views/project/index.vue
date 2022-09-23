@@ -283,6 +283,9 @@ export default {
       },
     }
   },
+  created () {
+    this.getList()
+  },
   methods: {
     getList () {
       return getProjectList(this.listQuery).then(response => {
