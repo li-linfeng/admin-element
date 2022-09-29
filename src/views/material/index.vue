@@ -9,14 +9,14 @@
 
     </div>
     <el-table class="cate-table"
+              ref="tableRef"
               :data="data"
-              style="width: 100%;margin-bottom: 20px;"
               row-key="key"
               border
-              stripe
               fit
-              highlight-current-row
               default-expand-all
+              :header-cell-class-name="headerStyle"
+              :row-class-name="tableRowStyle"
               :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
       <el-table-column align="center"
                        prop="id"
@@ -29,7 +29,7 @@
       </el-table-column>
 
       <el-table-column align="center"
-                       label="名称"
+                       label="物料号"
                        width="200">
         <template slot-scope="{row}">
           <div slot="reference"
@@ -47,21 +47,19 @@
         </template>
       </el-table-column>
       <el-table-column align="center"
-                       label="工程处理人"
-                       width="100">
-        <template slot-scope="{row}">
-          {{ row.handler ?  row.handler.username :''}}
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center"
                        label="描述"
                        width="300">
         <template slot-scope="{row}">
           {{ row.description}}
         </template>
       </el-table-column>
-
+      <el-table-column align="center"
+                       label="数量"
+                       width="100">
+        <template slot-scope="{row}">
+          {{ row.amount}}
+        </template>
+      </el-table-column>
       <el-table-column label="操作"
                        align="center"
                        class-name="small-padding fixed-width">
@@ -69,32 +67,32 @@
           <el-button size="mini"
                      type="warning"
                      v-if="row.code == 'XX'"
-                     @click="showAddMaterialDialog('component',row)">
+                     @click="showAddMaterialDialog(row,'component')">
             添加零件
+          </el-button>
+          <el-button type="primary"
+                     size="mini"
+                     v-if="row.type != 'category' && row.has_child >0"
+                     @click="showAddMaterialDialog(row)">
+            添加子组件
           </el-button>
           <el-button size="mini"
                      type="success"
                      v-if="row.type != 'category' && row.has_child >0"
-                     @click="showChoose('assembly',row)">
+                     @click="showChoose(row)">
             选择子组件
           </el-button>
           <el-button size="mini"
                      type="primary"
                      v-if="row.code != 'XX' && row.type == 'category'"
-                     @click="showAddMaterialDialog( 'category',row)">
+                     @click="showAddMaterialDialog(row)">
             添加产品
-          </el-button>
-          <el-button size="mini"
-                     type="primary"
-                     v-if="row.code != 'XX' && row.type == 'category' && permissions.indexOf('*') !== -1 "
-                     @click="showAddHandlerDialog(row)">
-            设置处理人
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <material :category="category"
+    <material :category_id="category_id"
               :dialogType="dialogType"
               :need_refresh.sync="need_refresh"
               :visible.sync="dialogFormVisible"
@@ -104,55 +102,44 @@
     <el-dialog :visible="showChooseDialog"
                @close="showChooseDialog = false"
                title="选择子组件">
-      <el-container>
-        <el-header>
-          <el-button type="primary"
-                     style="float:right"
-                     @click="showAddMaterialDialog('assembly')">
-            添加子组件
-          </el-button>
-        </el-header>
-        <el-main>
-          <el-form ref="combineForm"
-                   :model="combine"
-                   label-position="left"
-                   label-width="120px"
-                   style="width: 400px; margin-left:50px;">
-            <el-form-item label="搜索">
-              <el-input placeholder="输入关键字进行过滤"
-                        v-model="filterText">
-              </el-input>
-              <el-tree :data="tree"
-                       :check-strictly="true"
-                       show-checkbox
-                       node-key="label"
-                       :default-expand-all="true"
-                       @check-change="checkChange"
-                       :filter-node-method="filterNode"
-                       :expand-on-click-node="false"
-                       style="margin-top:20px"
-                       ref="tree">
-                <span class="custom-tree-node"
-                      slot-scope="{ node }">
-                  <span>{{ node.label }}</span>
-                </span>
-              </el-tree>
-            </el-form-item>
-            <div v-if="combine.children.length >0">
-              <el-form-item :label="'物料' + (index*1+1) + '数量'"
-                            v-for="(node, index) in combine.children"
-                            :key="node.label">
-                <span style="padding:10px; float: left; line-height: 25px;margin-right:20px;">{{combine.children[index].label}}</span>
-                <el-input-number v-model="combine.children[index].amount"
-                                 class="small_input el-item">
-                </el-input-number>
 
-              </el-form-item>
-            </div>
-          </el-form>
-        </el-main>
+      <el-form ref="combineForm"
+               :model="combine"
+               label-position="left"
+               label-width="120px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="搜索">
+          <el-input placeholder="输入关键字进行过滤"
+                    v-model="filterText">
+          </el-input>
+          <el-tree :data="tree"
+                   :check-strictly="true"
+                   show-checkbox
+                   node-key="label"
+                   :default-expand-all="true"
+                   @check-change="checkChange"
+                   :filter-node-method="filterNode"
+                   :expand-on-click-node="false"
+                   style="margin-top:20px"
+                   ref="tree">
+            <span class="custom-tree-node"
+                  slot-scope="{ node }">
+              <span>{{ node.label }}</span>
+            </span>
+          </el-tree>
+        </el-form-item>
+        <div v-if="combine.children.length >0">
+          <el-form-item :label="'物料' + (index*1+1) + '数量'"
+                        v-for="(node, index) in combine.children"
+                        :key="node.label">
+            <span style="padding:10px; float: left; line-height: 25px;margin-right:20px;">{{combine.children[index].label}}</span>
+            <el-input-number v-model="combine.children[index].amount"
+                             class="small_input el-item">
+            </el-input-number>
 
-      </el-container>
+          </el-form-item>
+        </div>
+      </el-form>
       <div slot="footer"
            class="dialog-footer">
         <el-button @click="showChooseDialog = false">
@@ -165,48 +152,12 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="处理人"
-               :visible.sync="handlerDialogVisible"
-               width="30%">
-      <el-form ref="handlerForm"
-               :model="handlerForm"
-               label-position="left"
-               label-width="100px"
-               style="width: 400px; margin-left:50px;">
-        <el-form-item label="处理人">
-          <el-select v-model="handlerForm.handler_id"
-                     filterable
-                     remote
-                     reserve-keyword
-                     placeholder="请输入邮箱或者用户名"
-                     :remote-method="searchUser"
-                     :loading="loading">
-            <el-option v-for="item in options"
-                       :key="item.id"
-                       :label="item.username"
-                       :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer"
-           class="dialog-footer">
-        <el-button @click="handlerDialogVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary"
-                   @click="bindHandler">
-          确认
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getMaterialTreeList, bindMaterial } from '@/api/material'
-import { getCategoryList, addHandler } from '@/api/category'
-import { searchUserList } from '@/api/user'
+import { getCategoryList } from '@/api/category'
 
 import Material from '@/components/Material' // secondary package based on el-pagination
 import QueryCol from '@/components/QueryCol' // secondary package based on el-pagination
@@ -249,12 +200,10 @@ export default {
       tree: [],
       filterText: '',
       category_id: 0,
-      category: null,
       need_refresh: false,
       showChooseDialog: false,
       data: [],
       dialogFormVisible: false,
-      handlerDialogVisible: false,
       dialogType: 'category',
       listQuery: {
         page: 1,
@@ -280,17 +229,13 @@ export default {
           "name": "物料描述",
         },
       ],
-      handlerForm: {
-        handler_id: '',
-        category_id: 0,
-      },
     }
   },
   watch: {
     need_refresh: {
       handler (newVal, oldVal) {
-        if (newVal != oldVal) {
-          this.getTreeData()
+        if (newVal == true) {
+          this.getList()
         }
       },
     },
@@ -300,6 +245,10 @@ export default {
   },
   created () {
     this.listQuery.page = 1
+    this.$nextTick(() => {
+      this.$refs.tableRef.setCurrentRow(-1)
+    })
+
     if (this.$route.query.category_name) {
       this.listQuery.filter_col = 'name'
       this.listQuery.filter_val = this.$route.query.category_name
@@ -307,47 +256,27 @@ export default {
     this.getList()
   },
   methods: {
-    showAddHandlerDialog (row) {
-      this.$nextTick(() => {
-        this.handlerForm = {
-          handler_id: '',
-          category_id: row.id,
-        }
-        this.handlerDialogVisible = true
-        this.searchUser()
-      })
-    },
-    searchUser (query) {
-      searchUserList({ keyword: query }).then(res => {
-        this.options = res.data
-      })
-    },
-    bindHandler () {
-      addHandler(this.handlerForm.category_id, this.handlerForm).then(res => {
-        this.handlerDialogVisible = false
-        this.retrieve()
-      })
-
-    },
     getTreeData () {
       var params = {
         filter_category_id: this.category_id,
         material_id: this.combine.material_id,
+        type: this.combine.type
       }
+      this.tree = []
       return getMaterialTreeList(params).then(response => {
         this.tree = response.data.tree
         this.category = response.data.category
       })
     },
-    showChoose (type, row) {
+    showChoose (row) {
       this.showChooseDialog = true
       this.category_id = row.category_id
-      this.dialogType = type
       var tmp = JSON.parse(JSON.stringify(row))
       this.$nextTick(() => {
         this.$refs['combineForm'].resetFields()
         this.combine.material_id = tmp.id
         this.combine.children = tmp.children
+        this.combine.type = tmp.type
         this.getTreeData()
         var keys = []
         for (var i = 0; i < tmp.children.length; i++) {
@@ -375,12 +304,10 @@ export default {
         }
       }
     },
-    showAddMaterialDialog (type, row = null) {
-      this.dialogType = type
+    showAddMaterialDialog (row, type = null) {
+      this.dialogType = type ? type : row.type
       this.dialogFormVisible = true
-      if (row) {
-        this.category = JSON.parse(JSON.stringify(row))
-      }
+      this.category_id = row.category_id
     },
     getList () {
       return getCategoryList(this.listQuery).then(response => {
@@ -421,12 +348,22 @@ export default {
         this.showChooseDialog = false
         this.retrieve()
       })
+    },
+    headerStyle ({ row, column, rowIndex, columnIndex }) {
+      return 'tableStyle'
+    },
+    tableRowStyle ({ row, rowIndex }) {
+      var level = row.level
+      return 'level_' + level
     }
   }
 }
 </script>
 
 <style>
+.el-table--enable-row-hover .el-table__body tr:hover > td {
+  background-color: transparent !important;
+}
 .cate-div {
   max-width: 1200px;
   margin: 100px auto;
@@ -435,5 +372,37 @@ export default {
 .small_input {
   float: left;
   width: 43%;
+}
+
+.tableStyle {
+  background-color: #242424 !important;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.level_0 {
+  background-color: #808b96 !important;
+  color: #fff;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.level_1 {
+  background-color: #d6eaf8 !important;
+  color: black;
+  font-weight: 400;
+}
+
+.sub-level_2 {
+  background-color: #fbfcfc !important;
+  color: black;
+  font-weight: 400;
+}
+
+.level_3 {
+  background-color: #e5e7e9 !important;
+  color: black;
+  font-weight: 400;
 }
 </style>

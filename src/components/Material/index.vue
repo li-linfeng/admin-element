@@ -89,8 +89,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    category: {
-      type: Object,
+    category_id: {
+      type: Number,
+      default: 0
     },
     visible: {
       type: Boolean,
@@ -156,7 +157,7 @@ export default {
       }
     },
     addMaterial () {
-      this.material.category_id = this.category.id
+      this.material.category_id = this.category_id
       //获取上传文件id
       let ids = []
       for (let i = 0; i < this.fileList.length; i++) {
@@ -176,10 +177,10 @@ export default {
     },
     getMaterialSeqNum () {
       var data = {
-        category_id: this.category.id,
+        category_id: this.category_id,
         type: this.material.type,
       }
-      if (this.category.id == 0 || this.material.type == '') {
+      if (this.category_id == 0 || this.material.type == '') {
         this.$message({
           showClose: true,
           message: '请先选择物料类型',
@@ -189,7 +190,7 @@ export default {
       }
       getMaterialSeq(data).then(res => {
         this.material.seq = res.data.seq
-        this.material.label = this.category.name + res.data.seq
+        this.material.label = res.data.label
         this.material.id = res.data.id
       })
     },

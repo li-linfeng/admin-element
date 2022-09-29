@@ -148,6 +148,18 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/handler',
+    component: Layout,
+    children: [
+      {
+        path: 'handler',
+        component: () => import('@/views/handler/handler'),
+        name: 'Handler',
+        meta: { title: '人员管理', icon: 'el-icon-money', api:"api.handlers" }
+      }
+    ]
+  },
     // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

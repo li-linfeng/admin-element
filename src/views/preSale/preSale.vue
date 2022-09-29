@@ -71,6 +71,20 @@
           <span>{{row.user.username }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="创建时间"
+                       align="center"
+                       width="100">
+        <template slot-scope="{row}">
+          <span>{{row.sale_request.created_at }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="希望货期"
+                       align="center"
+                       width="100">
+        <template slot-scope="{row}">
+          <span>{{row.sale_request.expect_time }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="处理人"
                        align="center"
                        width="100">
@@ -282,9 +296,16 @@
                     disabled />
         </el-form-item>
 
-        <el-form-item label="客户性质"
+        <el-form-item label="客户名称"
                       prop="customer_type">
           <el-input v-model="application_detail.customer_type"
+                    class="small_input"
+                    disabled />
+        </el-form-item>
+
+        <el-form-item label="希望货期"
+                      prop="expect_time">
+          <el-input v-model="application_detail.expect_time"
                     class="small_input"
                     disabled />
         </el-form-item>

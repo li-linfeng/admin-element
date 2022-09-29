@@ -69,7 +69,7 @@
           <span>{{ row.created_at}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建者"
+      <el-table-column label="创建人"
                        width="120"
                        align="center">
         <template slot-scope="{row}">
