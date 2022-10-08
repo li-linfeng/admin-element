@@ -6,9 +6,17 @@
               :filter_status="listQuery.filter_status"
               :filter_val="listQuery.filter_val"
               @handleFilter="handleFilter" />
+    <el-button :loading="orderDownloadLoading"
+               style="margin:0 0 20px 20px;"
+               type="primary"
+               icon="el-icon-document"
+               @click="handleOrderDownload">
+      导出excel
+    </el-button>
 
     <el-table :data="list"
               border
+              stripe
               fit
               highlight-current-row
               :span-method="arraySpanMethod"
@@ -157,7 +165,7 @@
                        align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusMap">
-            {{ row.order.status_cn }}
+            {{ row.status_cn }}
           </el-tag>
         </template>
       </el-table-column>
@@ -223,7 +231,7 @@
 </template>
 
 <script>
-import { getOrderList, finishOrderItem, bindMaterialNum, downloadMaterial } from '@/api/order'
+import { getOrderList, finishOrderItem, bindMaterialNum, downloadMaterial, exportOrders } from '@/api/order'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import QueryCol from '@/components/QueryCol'
 import { downloadBlob } from '@/utils/help'
@@ -244,6 +252,7 @@ export default {
     return {
       list: null,
       description: "",
+      orderDownloadLoading: false,
       total: 0,
       dialogFormVisible: false,
       downloadLoading: false,
@@ -302,6 +311,17 @@ export default {
     this.getList()
   },
   methods: {
+    handleOrderDownload () {
+      this.orderDownloadLoading = true
+      exportOrders(this.listQuery).then((res) => {
+        const type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        const name = `订单列表${Date.now()}.xlsx`;
+        downloadBlob(res, type, name);
+      })
+        .finally(() => {
+          this.downloadLoading = false
+        });
+    },
     bindMaterial (row) {
       this.showNumberDialog = true
       this.numForm.material_number = ''
@@ -381,5 +401,11 @@ export default {
 .filter-item {
   margin-left: 5px;
   margin-right: 15px;
+}
+.el-table--striped
+  .el-table__body
+  tr.el-table__row--striped.el-table__row--striped.el-table__row--striped
+  td {
+  background-color: #f0f9eb; /*替换为你需要的颜色，觉得优先级不够就加!important*/
 }
 </style>

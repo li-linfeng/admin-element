@@ -13,10 +13,18 @@
                @click="openDialogForm">
       增加
     </el-button>
+    <el-button :loading="downloadLoading"
+               style="margin:0 0 20px 20px;"
+               type="primary"
+               icon="el-icon-document"
+               @click="handleDownload">
+      导出excel
+    </el-button>
 
     <el-table :data="list"
               border
               fit
+              stripe
               highlight-current-row
               style="width: 100%; max-width: 1600px;">
       <el-table-column label="编号"
@@ -202,9 +210,10 @@
 </template>
 
 <script>
-import { getProjectList, addProject, updateProjectsStatus, deleteProjects } from '@/api/project'
+import { getProjectList, addProject, updateProjectsStatus, deleteProjects, exportProjects } from '@/api/project'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import QueryCol from '@/components/QueryCol' // secondary package based on el-pagination
+import { downloadBlob } from '@/utils/help'
 
 export default {
   name: 'ProjectIndex',
@@ -223,6 +232,7 @@ export default {
     return {
       list: null,
       total: 0,
+      downloadLoading: false,
       showCloseReasonDialog: false,
       showCloseReasonAction: 'add',
       closeForm: {
@@ -239,12 +249,16 @@ export default {
           "name": "项目名称",
         },
         {
+          "key": "customer_name",
+          "name": "客户名",
+        },
+        {
           "key": "product_name",
           "name": "需求产品",
         },
         {
-          "key": "customer_name",
-          "name": "客户名称",
+          "key": "user.filter_name",
+          "name": "创建人",
         },
       ],
       status: [
@@ -287,6 +301,17 @@ export default {
     this.getList()
   },
   methods: {
+    handleDownload () {
+      this.downloadLoading = true
+      exportProjects(this.listQuery).then((res) => {
+        const type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        const name = `项目列表${Date.now()}.xlsx`;
+        downloadBlob(res, type, name);
+      })
+        .finally(() => {
+          this.downloadLoading = false
+        });
+    },
     getList () {
       return getProjectList(this.listQuery).then(response => {
         this.list = response.data
@@ -376,5 +401,12 @@ export default {
 
 .description {
   font-size: 16px;
+}
+
+.el-table--striped
+  .el-table__body
+  tr.el-table__row--striped.el-table__row--striped.el-table__row--striped
+  td {
+  background-color: #f0f9eb; /*替换为你需要的颜色，觉得优先级不够就加!important*/
 }
 </style>

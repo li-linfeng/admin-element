@@ -31,3 +31,12 @@ export function deleteProjects(id) {
     method: 'delete',
   })
 }
+
+export function exportProjects(query) {
+  return request({
+    url: `/api/projects/download`,
+    method: 'get',
+    params: query,
+    responseType: "blob",
+  })
+}

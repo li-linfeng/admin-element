@@ -31,6 +31,7 @@
 
     <el-table :data="list"
               border
+              stripe
               fit
               highlight-current-row
               style="width: 100%; max-width: 1600px;">
@@ -255,5 +256,12 @@ export default {
 .filter-item {
   margin-left: 5px;
   margin-right: 15px;
+}
+
+.el-table--striped
+  .el-table__body
+  tr.el-table__row--striped.el-table__row--striped.el-table__row--striped
+  td {
+  background-color: #f0f9eb; /*替换为你需要的颜色，觉得优先级不够就加!important*/
 }
 </style>

@@ -53,3 +53,12 @@ export function publishSaleRequest(id){
     method: 'post',
   })
 }
+
+export function exportSaleRequest(query) {
+  return request({
+    url: `/api/sale_requests/download`,
+    method: 'get',
+    params: query,
+    responseType: "blob",
+  })
+}

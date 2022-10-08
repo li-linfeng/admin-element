@@ -6,6 +6,13 @@
               :filter_status="listQuery.filter_status"
               :filter_val="listQuery.filter_val"
               @handleFilter="handleFilter" />
+    <el-button :loading="downloadLoading"
+               style="margin:0 0 20px 20px;"
+               type="primary"
+               icon="el-icon-document"
+               @click="handleDownload">
+      导出excel
+    </el-button>
     <el-button class="filter-item"
                style="margin-left: 10px; margin-bottom: 25px;"
                type="primary"
@@ -16,6 +23,7 @@
 
     <el-table :data="list"
               border
+              stripe
               fit
               highlight-current-row
               @selection-change="handleItemsChange"
@@ -46,7 +54,7 @@
           <span>{{row.sale_request.customer_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品性质"
+      <el-table-column label="产品类型"
                        align="center"
                        width="120">
         <template slot-scope="{row}">
@@ -457,7 +465,6 @@
         <el-form-item label="总预付款"
                       prop="total_pay">
           <el-input v-model="order.total_pre_pay"
-                    v-bind:values="getTotalPrePay()"
                     v-money:2 />
         </el-form-item>
 
@@ -520,11 +527,12 @@
 </template>
 
 <script>
-import { getPreSaleList, updatePreSale, modifyPreSaleStatus } from '@/api/preSale'
+import { getPreSaleList, updatePreSale, modifyPreSaleStatus, exportPreSales } from '@/api/preSale'
 import { uploadFile } from '@/api/upload'
 import { getOrderNum, createOrder } from '@/api/order'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import QueryCol from '@/components/QueryCol' // secondary package based on el-pagination
+import { downloadBlob } from '@/utils/help'
 
 
 export default {
@@ -567,6 +575,7 @@ export default {
     return {
       list: null,
       description: "",
+      downloadLoading: false,
       total: 0,
       select: null,
       dialogFormVisible: false,
@@ -612,6 +621,14 @@ export default {
         {
           "key": "product_type",
           "name": "产品型号",
+        },
+        {
+          "key": "user.filter_name",
+          "name": "创建人",
+        },
+        {
+          "key": "handler.filter_name",
+          "name": "处理人",
         },
       ],
       application_detail_files: [],
@@ -680,11 +697,16 @@ export default {
     },
   },
   methods: {
-    getTotalPay () {
-
-    },
-    getTotalPrePay () {
-      // console.log(222)
+    handleDownload () {
+      this.downloadLoading = true
+      exportPreSales(this.listQuery).then((res) => {
+        const type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        const name = `售前处理列表${Date.now()}.xlsx`;
+        downloadBlob(res, type, name);
+      })
+        .finally(() => {
+          this.downloadLoading = false
+        });
     },
     getList () {
       return getPreSaleList(this.listQuery).then(response => {
@@ -837,5 +859,12 @@ export default {
 }
 .input_val {
   width: 50% !important;
+}
+
+.el-table--striped
+  .el-table__body
+  tr.el-table__row--striped.el-table__row--striped.el-table__row--striped
+  td {
+  background-color: #f0f9eb; /*替换为你需要的颜色，觉得优先级不够就加!important*/
 }
 </style>

@@ -25,3 +25,12 @@ export function modifyPreSaleStatus(id, data) {
 }
 
 
+
+export function exportPreSales(query) {
+  return request({
+    url: `/api/preSales/download`,
+    method: 'get',
+    params: query,
+    responseType: "blob",
+  })
+}

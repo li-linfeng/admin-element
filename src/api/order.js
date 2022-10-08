@@ -49,3 +49,13 @@ export function downloadMaterial(id) {
     responseType: "blob",
   })
 }
+
+
+export function exportOrders(query) {
+  return request({
+    url: `/api/orders/download`,
+    method: 'get',
+    params: query,
+    responseType: "blob",
+  })
+}
