@@ -160,6 +160,18 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/news',
+    component: Layout,
+    children: [
+      {
+        path: 'news',
+        component: () => import('@/views/news/news'),
+        name: 'News',
+        meta: { title: '每日要闻', icon: 'el-icon-money', api:"api.news" }
+      }
+    ]
+  },
     // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
