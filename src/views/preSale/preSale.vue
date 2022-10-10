@@ -674,6 +674,11 @@ export default {
     }
   },
   created () {
+
+    if (this.$route.query.source_id) {
+      this.listQuery.filter_col = 'sale_num'
+      this.listQuery.filter_val = this.$route.query.source_id
+    }
     this.getList()
   },
   watch: {
@@ -736,7 +741,6 @@ export default {
       })
     },
     handleFilter (params) {
-      this.listQuery.page = 1
       this.listQuery.page = 1
       this.listQuery.filter_col = params.col ? params.col : ""
       this.listQuery.filter_val = params.val ? params.val : ""

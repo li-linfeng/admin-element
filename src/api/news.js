@@ -38,3 +38,25 @@ export function deleteNews(id) {
     method: 'delete'
   })
 }
+
+
+export function getToDoList(query) {
+  return request({
+    url: `/api/todo`,
+    method: 'get',
+    params: query
+  })
+}
+export function readTodo(id) {
+  return request({
+    url: `/api/todo/${id}/read`,
+    method: 'put',
+  })
+}
+
+export function readAll() {
+  return request({
+    url: `/api/todo/readAll`,
+    method: 'post',
+  })
+}

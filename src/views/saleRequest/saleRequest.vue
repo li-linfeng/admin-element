@@ -460,6 +460,10 @@ export default {
     }
   },
   created () {
+    if (this.$route.query.source_id) {
+      this.listQuery.filter_col = 'sale_num'
+      this.listQuery.filter_val = this.$route.query.source_id
+    }
     this.getList()
   },
   methods: {
