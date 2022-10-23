@@ -8,7 +8,9 @@
       <ul class="news-content">
         <li v-for="message in messages"
             class="text item"
-            :key="message.id">{{message.title }} <span style="float:right">{{message.created_at}}</span></li>
+            :key="message.id">{{message.title }} <button size="mini"
+                  type="primary"
+                  style="float:right">{{message.created_at}}</button><span style="float:right">{{message.created_at}}</span></li>
       </ul>
       <pagination v-show="total>0"
                   :total="total"

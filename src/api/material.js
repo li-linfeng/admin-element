@@ -1,12 +1,5 @@
 import request from '@/utils/request'
 
-export function getMaterialSeq(data) {
-  return request({
-    url: '/api/material_seq',
-    method: 'post',
-    data
-  })
-}
 
 export function getMaterialTreeList(query) {
   return request({
@@ -16,14 +9,13 @@ export function getMaterialTreeList(query) {
   })
 }
 
-export function addMaterial(id,data) {
+export function addMaterial(data) {
   return request({
-    url: `/api/materials/${id}`,
-    method: 'put',
+    url: `/api/materials`,
+    method: 'post',
     data
   })
 }
-
 
 export function bindMaterial(id, data) {
   return request({
@@ -33,9 +25,3 @@ export function bindMaterial(id, data) {
   })
 }
 
-export function deleteMaterial(id) {
-  return request({
-    url: `/api/materials/${id}`,
-    method: 'delete',
-  })
-}

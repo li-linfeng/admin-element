@@ -26,12 +26,7 @@
         <el-form-item label="物料编号"
                       prop="label">
           <el-input v-model="material.label"
-                    :disabled="true"
                     class="small_input" />
-          <el-button type="primary"
-                     class="el-item"
-                     @click="getMaterialSeqNum"
-                     style="float:left; margin-left:20px ;">获取编码</el-button>
         </el-form-item>
 
         <el-form-item label="是否有子分类"
@@ -42,6 +37,19 @@
           <el-radio v-model="material.has_child"
                     label="0"
                     checked="checked">否</el-radio>
+        </el-form-item>
+
+        <el-form-item label="物料属性"
+                      prop="property">
+          <el-select v-model="material.property"
+                     clearable
+                     placeholder="请选择">
+            <el-option v-for="item in property_options"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="描述"
@@ -79,7 +87,7 @@
 </template>
 
 <script>
-import { addMaterial, getMaterialSeq } from '@/api/material'
+import { addMaterial } from '@/api/material'
 import { uploadFile } from '@/api/upload'
 
 export default {
@@ -121,6 +129,29 @@ export default {
           { "key": "公用零件", "val": "single-component" },
         ]
       },
+      property_options:
+        [
+          {
+            value: '机加工',
+            label: '机加工'
+          },
+          {
+            value: '毛坯',
+            label: '毛坯'
+          },
+          {
+            value: '标准件',
+            label: '标准件'
+          },
+          {
+            value: '五金件',
+            label: '五金件'
+          },
+          {
+            value: '橡塑件',
+            label: '橡塑件'
+          },
+        ],
       material: {
         parent_id: 0,
         category_id: 0,
@@ -130,6 +161,7 @@ export default {
         has_child: '0',
         amount: 1,
         file_ids: '',
+        property: '',
         children: [],
       },
       rules: {
@@ -164,34 +196,16 @@ export default {
         ids.push(this.fileList[i].id)
       }
       this.material.file_ids = ids.join()
+      console.log(this.material)
       this.$nextTick(() => {
         this.$refs['materialForm'].validate((valid) => {
           if (valid) {
-            addMaterial(this.material.id, this.material).then(response => {
+            console.log(this.material)
+            addMaterial(this.material).then(response => {
               this.handleClose()
             })
           }
         });
-      })
-
-    },
-    getMaterialSeqNum () {
-      var data = {
-        category_id: this.category_id,
-        type: this.material.type,
-      }
-      if (this.category_id == 0 || this.material.type == '') {
-        this.$message({
-          showClose: true,
-          message: '请先选择物料类型',
-          type: 'error'
-        });
-        return
-      }
-      getMaterialSeq(data).then(res => {
-        this.material.seq = res.data.seq
-        this.material.label = res.data.label
-        this.material.id = res.data.id
       })
     },
     handleRemove (file, fileList) {

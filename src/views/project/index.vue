@@ -27,12 +27,20 @@
               stripe
               highlight-current-row
               style="width: 100%; max-width: 1600px;">
-      <el-table-column label="编号"
+      <el-table-column label="序号"
                        prop="id"
                        align="center"
                        width="80">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="项目编号"
+                       prop="id"
+                       align="center"
+                       width="200">
+        <template slot-scope="{row}">
+          <span>{{row.project_no }}</span>
         </template>
       </el-table-column>
       <el-table-column label="项目名称"
@@ -49,13 +57,13 @@
           <span class="link-type">{{ row.customer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目节点"
+      <!-- <el-table-column label="项目节点"
                        width="170"
                        align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.project_duration}} </span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="需求产品"
                        width="200"
                        align="center">
@@ -63,7 +71,7 @@
           <span class="link-type">{{ row.product_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目预估金额"
+      <!-- <el-table-column label="项目预估金额"
                        width="150"
                        align="center">
         <template slot-scope="{row}">
@@ -76,7 +84,7 @@
         <template slot-scope="{row}">
           <span>{{ row.created_at}}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="创建人"
                        width="120"
                        align="center">
@@ -84,21 +92,18 @@
           <span>{{ row.user.username ? row.user.username: "" }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态"
-                       width="120"
-                       align="center">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusMap">
-            {{ row.status_cn }}
-          </el-tag>
-        </template>
-      </el-table-column>
+
       <el-table-column label="操作"
                        align="center"
                        class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <span v-if="row.status =='continue'"
                 style="margin-right:10px">
+            <el-button type="primary"
+                       size="mini"
+                       @click="showDetailDialog(row)">
+              详情
+            </el-button>
             <el-button type="primary"
                        size="mini"
                        @click="showCloseDialog('add',row)">
@@ -123,6 +128,16 @@
             删除
           </el-button>
         </template>
+
+      </el-table-column>
+      <el-table-column label="状态"
+                       width="120"
+                       align="center">
+        <template slot-scope="{row}">
+          <el-tag :type="row.status | statusMap">
+            {{ row.status_cn }}
+          </el-tag>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -132,7 +147,7 @@
                 :per_page.sync="listQuery.per_page"
                 @pagination="getList" />
 
-    <el-dialog title="新增项目"
+    <el-dialog :title="action =='detail' ? '详情':'新增项目'"
                :visible.sync="dialogFormVisible">
       <el-form ref="dataForm"
                :rules="rules"
@@ -140,17 +155,25 @@
                label-position="left"
                label-width="110px"
                style="width: 400px; margin-left:50px;">
+        <el-form-item label="项目编号"
+                      prop="name">
+          <el-input v-model="tmp.project_no"
+                    :disabled="action=='detail'" />
+        </el-form-item>
         <el-form-item label="项目名称"
                       prop="name">
-          <el-input v-model="tmp.name" />
+          <el-input v-model="tmp.name"
+                    :disabled="action=='detail'" />
         </el-form-item>
         <el-form-item label="客户名"
                       prop="customer_name">
-          <el-input v-model="tmp.customer_name" />
+          <el-input v-model="tmp.customer_name"
+                    :disabled="action=='detail'" />
         </el-form-item>
         <el-form-item label="需求产品"
                       prop="product_name">
-          <el-input v-model="tmp.product_name" />
+          <el-input v-model="tmp.product_name"
+                    :disabled="action=='detail'" />
         </el-form-item>
         <el-form-item label="项目节点"
                       prop="product_time">
@@ -159,12 +182,20 @@
                           range-separator="至"
                           start-placeholder="开始月份"
                           end-placeholder="结束月份"
-                          value-format="yyyy-MM">
+                          value-format="yyyy-MM"
+                          :disabled="action=='detail'">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="项目预估金额"
                       prop="cost">
-          <el-input v-model="tmp.cost" />
+          <el-input v-model="tmp.cost"
+                    :disabled="action=='detail'" />
+        </el-form-item>
+        <el-form-item label="竞品信息">
+          <el-input v-model="tmp.compare_info"
+                    type="textarea"
+                    :rows="4"
+                    :disabled="action=='detail'" />
         </el-form-item>
       </el-form>
       <div slot="footer"
@@ -173,7 +204,8 @@
           取消
         </el-button>
         <el-button type="primary"
-                   @click="createData()">
+                   @click="createData()"
+                   :disabled="action=='detail'">
           确认
         </el-button>
       </div>
@@ -206,6 +238,7 @@
         </el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -232,6 +265,7 @@ export default {
     return {
       list: null,
       total: 0,
+      action: "add",
       downloadLoading: false,
       showCloseReasonDialog: false,
       showCloseReasonAction: 'add',
@@ -288,9 +322,12 @@ export default {
         customer_name: '',
         project_time: [],
         cost: '',
+        compare_info: "",
+        project_no: "",
       },
       dialogFormVisible: false,
       rules: {
+        project_no: [{ required: true, message: '请填写项目编号', trigger: 'change' }],
         name: [{ required: true, message: '请填写项目名称', trigger: 'change' }],
         product_name: [{ required: true, message: '请填写需求产品', trigger: 'change' }],
         customer_name: [{ required: true, message: '请填写客户名称', trigger: 'change' }],
@@ -327,8 +364,17 @@ export default {
     },
     openDialogForm () {
       this.dialogFormVisible = true
+      this.action = 'add'
       this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
+        this.tmp = {
+          name: "",
+          product_name: '',
+          customer_name: '',
+          project_time: [],
+          cost: '',
+          compare_info: "",
+          project_no: "",
+        }
       })
     },
     handleModifyStatus (id, status) {
@@ -358,6 +404,13 @@ export default {
     deleteData (row) {
       deleteProjects(row.id).then(res => {
         this.retrieve()
+      })
+    },
+    showDetailDialog (row) {
+      this.dialogFormVisible = true
+      this.action = 'detail'
+      this.$nextTick(() => {
+        this.tmp = JSON.parse(JSON.stringify(row))
       })
     },
     showCloseDialog (action, row) {

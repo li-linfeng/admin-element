@@ -28,114 +28,114 @@
               stripe
               highlight-current-row
               style="width: 100%; max-width: 1600px;">
-      <el-table-column label="需求编号"
+
+      <el-table-column label="序号"
                        align="center"
                        width="200">
         <template slot-scope="{row}">
-          <span>{{row.sale_num }}</span>
+          <span>{{row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="项目编号"
-                       align="center"
-                       width="80">
-        <template slot-scope="{row}">
-          <span>{{row.project_id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="客户名称"
-                       align="center"
-                       width="120">
-        <template slot-scope="{row}">
-          <span>{{row.customer_type }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="产品类型"
-                       align="center"
-                       width="120">
-        <template slot-scope="{row}">
-          <span>{{row.product_type }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="希望货期"
-                       align="center"
-                       width="120">
-        <template slot-scope="{row}">
-          <span>{{row.expect_time }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="附件"
-                       align="center"
-                       width="220">
-        <template slot-scope="{row}">
-          <div v-for="item in row.uploads"
-               :key="item.name">
-            <span>{{item.name}}</span>
-            <el-link :underline="false"
-                     icon="el-icon-download"
-                     :href="item.url"
-                     type="primary"
-                     download>下载</el-link>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建人"
-                       align="center"
-                       width="120">
-        <template slot-scope="{row}">
-          <span>{{row.user.username }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间"
-                       align="center"
-                       width="160">
-        <template slot-scope="{row}">
-          <span>{{row.created_at }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="应用条件"
-                       align="center"
-                       width="80">
-        <template slot-scope="{row}">
-          <el-button size="mini"
-                     type="success"
-                     @click="showDialog('detail',row)">
-            查看
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态"
-                       width="90"
-                       align="center">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusMap">
-            {{ row.status_cn }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="处理人"
-                       align="center"
-                       width="90">
-        <template slot-scope="{row}">
-          <span>{{row.handler.username }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作"
-                       align="center"
-                       class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button size="mini"
-                     type="danger"
-                     v-if="row.status == 'open' || row.status=='return' "
-                     @click="publish(row)">
-            发布
-          </el-button>
-          <el-button size="mini"
-                     type="primary"
-                     @click="showDialog('update',row)">
-            修改
-          </el-button>
-        </template>
-      </el-table-column>
+        <el-table-column label="需求编号"
+                         align="center"
+                         width="200">
+          <template slot-scope="{row}">
+            <span>{{row.project_no }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="客户名称"
+                         align="center"
+                         width="120">
+          <template slot-scope="{row}">
+            <span>{{row.customer_type }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品类型"
+                         align="center"
+                         width="120">
+          <template slot-scope="{row}">
+            <span>{{row.product_type }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="希望货期"
+                         align="center"
+                         width="120">
+          <template slot-scope="{row}">
+            <span>{{row.expect_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="附件"
+                         align="center"
+                         width="220">
+          <template slot-scope="{row}">
+            <div v-for="item in row.uploads"
+                 :key="item.name">
+              <span>{{item.name}}</span>
+              <el-link :underline="false"
+                       icon="el-icon-download"
+                       :href="item.url"
+                       type="primary"
+                       download>下载</el-link>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建人"
+                         align="center"
+                         width="120">
+          <template slot-scope="{row}">
+            <span>{{row.user.username }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间"
+                         align="center"
+                         width="160">
+          <template slot-scope="{row}">
+            <span>{{row.created_at }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="应用条件"
+                         align="center"
+                         width="80">
+          <template slot-scope="{row}">
+            <el-button size="mini"
+                       type="success"
+                       @click="showDialog('detail',row)">
+              查看
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态"
+                         width="90"
+                         align="center">
+          <template slot-scope="{row}">
+            <el-tag :type="row.status | statusMap">
+              {{ row.status_cn }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="处理人"
+                         align="center"
+                         width="90">
+          <template slot-scope="{row}">
+            <span>{{row.handler.username }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作"
+                         align="center"
+                         class-name="small-padding fixed-width">
+          <template slot-scope="{row}">
+            <el-button size="mini"
+                       type="danger"
+                       v-if="row.status == 'open' || row.status=='return' "
+                       @click="publish(row)">
+              发布
+            </el-button>
+            <el-button size="mini"
+                       type="primary"
+                       @click="showDialog('update',row)">
+              修改
+            </el-button>
+          </template>
+        </el-table-column>
     </el-table>
 
     <pagination v-show="total>0"

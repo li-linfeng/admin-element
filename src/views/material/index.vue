@@ -24,7 +24,7 @@
                        sortable
                        width="100">
         <template slot-scope="{row}">
-          <span>{{row.type =='category' ? row.id : ''  }}</span>
+          <span>{{ row.index }}</span>
         </template>
       </el-table-column>
 
@@ -32,18 +32,7 @@
                        label="物料号"
                        width="200">
         <template slot-scope="{row}">
-          <div slot="reference"
-               class="name-wrapper">
-            <el-tag :type="row.type | colorsMap"
-                    size="medium">{{ row.name}}</el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column align="center"
-                       label="物料类型"
-                       width="200">
-        <template slot-scope="{row}">
-          {{ row.type | typesMap}}
+          <span>{{ row.name}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center"
@@ -53,6 +42,14 @@
           {{ row.description}}
         </template>
       </el-table-column>
+      <el-table-column align="center"
+                       label="物料属性"
+                       width="200">
+        <template slot-scope="{row}">
+          {{ row.type | typesMap}}
+        </template>
+      </el-table-column>
+
       <el-table-column align="center"
                        label="数量"
                        width="100">
@@ -115,7 +112,7 @@
           <el-tree :data="tree"
                    :check-strictly="true"
                    show-checkbox
-                   node-key="label"
+                   node-key="description"
                    :default-expand-all="true"
                    @check-change="checkChange"
                    :filter-node-method="filterNode"
@@ -132,7 +129,7 @@
           <el-form-item :label="'物料' + (index*1+1) + '数量'"
                         v-for="(node, index) in combine.children"
                         :key="node.label">
-            <span style="padding:10px; float: left; line-height: 25px;margin-right:20px;">{{combine.children[index].label}}</span>
+            <span style="padding:10px; float: left; line-height: 25px;margin-right:20px;">{{combine.children[index].description}}</span>
             <el-input-number v-model="combine.children[index].amount"
                              class="small_input el-item">
             </el-input-number>
@@ -280,7 +277,7 @@ export default {
         this.getTreeData()
         var keys = []
         for (var i = 0; i < tmp.children.length; i++) {
-          keys.push(tmp.children[i].label)
+          keys.push(tmp.children[i].description)
         }
         this.$refs.tree.setCheckedKeys(keys);
       })
@@ -295,6 +292,7 @@ export default {
           var child = {
             id: node.id,
             label: node.label,
+            description: node.description,
             amount: 1,
           }
           this.combine.children.push(child)
@@ -353,8 +351,10 @@ export default {
       return 'tableStyle'
     },
     tableRowStyle ({ row, rowIndex }) {
-      var level = row.level
-      return 'level_' + level
+      if (row.type == 'category') {
+        return 'level_0'
+      }
+
     }
   }
 }
@@ -382,27 +382,9 @@ export default {
 }
 
 .level_0 {
-  background-color: #808b96 !important;
+  background-color: #242424 !important;
   color: #fff;
   font-weight: 400;
   font-size: 16px;
-}
-
-.level_1 {
-  background-color: #d6eaf8 !important;
-  color: black;
-  font-weight: 400;
-}
-
-.sub-level_2 {
-  background-color: #fbfcfc !important;
-  color: black;
-  font-weight: 400;
-}
-
-.level_3 {
-  background-color: #e5e7e9 !important;
-  color: black;
-  font-weight: 400;
 }
 </style>
