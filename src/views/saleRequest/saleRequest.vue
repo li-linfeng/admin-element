@@ -31,111 +31,114 @@
 
       <el-table-column label="序号"
                        align="center"
-                       width="200">
+                       width="100">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
-        <el-table-column label="需求编号"
-                         align="center"
-                         width="200">
-          <template slot-scope="{row}">
-            <span>{{row.project_no }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="客户名称"
-                         align="center"
-                         width="120">
-          <template slot-scope="{row}">
-            <span>{{row.customer_type }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="产品类型"
-                         align="center"
-                         width="120">
-          <template slot-scope="{row}">
-            <span>{{row.product_type }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="希望货期"
-                         align="center"
-                         width="120">
-          <template slot-scope="{row}">
-            <span>{{row.expect_time }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="附件"
-                         align="center"
-                         width="220">
-          <template slot-scope="{row}">
-            <div v-for="item in row.uploads"
-                 :key="item.name">
-              <span>{{item.name}}</span>
-              <el-link :underline="false"
-                       icon="el-icon-download"
-                       :href="item.url"
-                       type="primary"
-                       download>下载</el-link>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建人"
-                         align="center"
-                         width="120">
-          <template slot-scope="{row}">
-            <span>{{row.user.username }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间"
-                         align="center"
-                         width="160">
-          <template slot-scope="{row}">
-            <span>{{row.created_at }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="应用条件"
-                         align="center"
-                         width="80">
-          <template slot-scope="{row}">
-            <el-button size="mini"
-                       type="success"
-                       @click="showDialog('detail',row)">
-              查看
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column label="状态"
-                         width="90"
-                         align="center">
-          <template slot-scope="{row}">
-            <el-tag :type="row.status | statusMap">
-              {{ row.status_cn }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="处理人"
-                         align="center"
-                         width="90">
-          <template slot-scope="{row}">
-            <span>{{row.handler.username }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作"
-                         align="center"
-                         class-name="small-padding fixed-width">
-          <template slot-scope="{row}">
-            <el-button size="mini"
-                       type="danger"
-                       v-if="row.status == 'open' || row.status=='return' "
-                       @click="publish(row)">
-              发布
-            </el-button>
-            <el-button size="mini"
-                       type="primary"
-                       @click="showDialog('update',row)">
-              修改
-            </el-button>
-          </template>
-        </el-table-column>
+      </el-table-column>
+      <el-table-column label="项目编号"
+                       align="center"
+                       width="200">
+        <template slot-scope="{row}">
+          <span>{{row.project_no }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="客户名称"
+                       align="center"
+                       width="120">
+        <template slot-scope="{row}">
+          <span>{{row.customer_type }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品类型"
+                       align="center"
+                       width="120">
+        <template slot-scope="{row}">
+          <span v-for="item in row.product_type_arr"
+                :key="item"
+                style="display: block;">{{item}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="希望货期"
+                       align="center"
+                       width="120">
+        <template slot-scope="{row}">
+          <span>{{row.expect_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="附件"
+                       align="center"
+                       width="220">
+        <template slot-scope="{row}">
+          <div v-for="item in row.uploads"
+               :key="item.name">
+            <span>{{item.name}}</span>
+            <el-link :underline="false"
+                     icon="el-icon-download"
+                     :href="item.url"
+                     type="primary"
+                     download>下载</el-link>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建人"
+                       align="center"
+                       width="120">
+        <template slot-scope="{row}">
+          <span>{{row.user.username }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间"
+                       align="center"
+                       width="160">
+        <template slot-scope="{row}">
+          <span>{{row.created_at }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="应用条件"
+                       align="center"
+                       width="80">
+        <template slot-scope="{row}">
+          <el-button size="mini"
+                     type="success"
+                     @click="showDialog('detail',row)">
+            查看
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="处理人"
+                       align="center"
+                       width="90">
+        <template slot-scope="{row}">
+          <span>{{row.handler.username }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作"
+                       align="center"
+                       class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
+          <el-button size="mini"
+                     type="danger"
+                     v-if="row.status == 'open' || row.status=='return' "
+                     @click="publish(row)">
+            发布
+          </el-button>
+          <el-button size="mini"
+                     type="primary"
+                     @click="showDialog('update',row)">
+            修改
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态"
+                       width="90"
+                       align="center">
+        <template slot-scope="{row}">
+          <el-tag :type="row.status | statusMap">
+            {{ row.status_cn }}
+          </el-tag>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination v-show="total>0"
@@ -152,27 +155,16 @@
                label-width="140px"
                style="width:1200px; height:800px;margin-left:50px;"
                :rules="rules">
-
-        <el-form-item label="需求编号"
-                      prop="sale_num">
-          <el-input v-model="tmp.sale_num"
-                    class="small_input"
-                    :disabled="true" />
-          <el-button v-if="dialogAction == 'add'"
-                     type="primary"
-                     @click="getSaleNum"
-                     style="float:left; margin-left:20px ;">获取编码</el-button>
-        </el-form-item>
-
         <el-form-item label="项目编号"
                       prop="project_id">
-          <el-input v-model="tmp.project_id"
+          <el-input v-model="tmp.project_no"
                     class="small_input"
                     :disabled="editable[dialogAction]" />
         </el-form-item>
         <el-form-item label="产品类型"
                       prop="product_type">
           <el-select v-model="tmp.product_type"
+                     multiple
                      :disabled="editable[dialogAction]"
                      placeholder="请选择">
             <el-option v-for="item in product_types"
@@ -181,13 +173,6 @@
                        :value="item.val">
             </el-option>
           </el-select>
-        </el-form-item>
-
-        <el-form-item label="客户名称"
-                      prop="customer_type">
-          <el-input v-model="tmp.customer_type"
-                    class="small_input"
-                    :disabled="editable[dialogAction]" />
         </el-form-item>
 
         <el-form-item label="希望货期"
@@ -353,7 +338,7 @@ export default {
       dialogAction: "add",
       statusOptions: [
         {
-          name: "销售",
+          name: "占用",
           key: "open",
         },
         {
@@ -371,16 +356,16 @@ export default {
       ],
       cols: [
         {
-          "key": "sale_num",
-          "name": "需求编号",
+          "key": "project_no",
+          "name": "项目编号",
         },
         {
-          "key": "customer_type",
+          "key": "project.filter_customer_name",
           "name": "客户名称",
         },
         {
           "key": "product_type",
-          "name": "产品性质",
+          "name": "产品类型",
         },
         {
           "key": "user.filter_name",
@@ -392,39 +377,11 @@ export default {
         },
       ],
       product_types: [
-        { "key": "HNCGD", "val": "HNCGD" },
-        { "key": "HNCGR", "val": "HNCGR" },
         { "key": "HNCTL", "val": "HNCTL" },
-        { "key": "HNCJW", "val": "HNCJW" },
+        { "key": "HNCGD", "val": "HNCGD" },
         { "key": "HNCFE", "val": "HNCFE" },
-        { "key": "HNCHB", "val": "HNCHB" },
-        { "key": "HNCTE", "val": "HNCTE" },
+        { "key": "HNCGR", "val": "HNCGR" },
         { "key": "HNCWD", "val": "HNCWD" },
-        { "key": "HNCCE", "val": "HNCCE" },
-        { "key": "HNCRB", "val": "HNCRB" },
-        { "key": "HNCDC", "val": "HNCDC" },
-        { "key": "HNGTL", "val": "HNGTL" },
-        { "key": "HNGGD", "val": "HNGGD" },
-        { "key": "HNGGR", "val": "HNGGR" },
-        { "key": "HNGDC", "val": "HNGDC" },
-        { "key": "HNGJW", "val": "HNGDC" },
-        { "key": "HNGFE", "val": "HNGDC" },
-        { "key": "HNGHB", "val": "HNGDC" },
-        { "key": "HNGTE", "val": "HNGDC" },
-        { "key": "HNGWD", "val": "HNGDC" },
-        { "key": "HNGCE", "val": "HNGDC" },
-        { "key": "HNGRB", "val": "HNGDC" },
-        { "key": "HNSTL", "val": "HNGDC" },
-        { "key": "HNSGD", "val": "HNGDC" },
-        { "key": "HNSGR", "val": "HNGDC" },
-        { "key": "HNSDC", "val": "HNGDC" },
-        { "key": "HNSJW", "val": "HNGDC" },
-        { "key": "HNSFE", "val": "HNGDC" },
-        { "key": "HNSHB", "val": "HNGDC" },
-        { "key": "HNSTE", "val": "HNGDC" },
-        { "key": "HNSWD", "val": "HNGDC" },
-        { "key": "HNSCE", "val": "HNGDC" },
-        { "key": "HNSRB", "val": "HNGDC" },
       ],
       fileList: [],
       listQuery: {
@@ -435,9 +392,8 @@ export default {
         filter_status: "",
       },
       tmp: {
-        sale_num: "",
-        project_id: "",
-        product_type: "",
+        project_no: "",
+        product_type: [],
         customer_type: "",
         expect_time: "",
         device_name: "",
@@ -501,6 +457,7 @@ export default {
           this.fileList = []
         } else {
           this.tmp = JSON.parse(JSON.stringify(row))
+          this.tmp.product_type = row.product_type_arr
           this.fileList = JSON.parse(JSON.stringify(row.uploads))
         }
       })
