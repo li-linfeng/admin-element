@@ -21,7 +21,13 @@
               highlight-current-row
               :span-method="arraySpanMethod"
               style="width: 100%; max-width: 1600px;margin-top: 25px;">
-
+      <el-table-column label="序号"
+                       align="center"
+                       width="190">
+        <template slot-scope="{row}">
+          <span>{{row.order.id }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="订单编号"
                        align="center"
                        width="190">
@@ -34,69 +40,6 @@
                        width="190">
         <template slot-scope="{row}">
           <span>{{row.order.created_at }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="订单总价"
-                       align="center"
-                       width="130">
-        <template slot-scope="{row}">
-          <span>{{row.order.total_pay }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="总预付款"
-                       align="center"
-                       width="130">
-        <template slot-scope="{row}">
-          <span>{{row.order.total_pre_pay }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="需求编号"
-                       align="center"
-                       width="190">
-        <template slot-scope="{row}">
-          <span>{{row.sale_num}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="产品类型"
-                       align="center"
-                       width="80">
-        <template slot-scope="{row}">
-          <span>{{row.sale_request.product_type}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="产品名称"
-                       align="center"
-                       width="150">
-        <template slot-scope="{row}">
-          <span>{{row.product_type}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="产品单价"
-                       align="center"
-                       width="130">
-        <template slot-scope="{row}">
-          <span>{{row.product_price}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="单套预付款"
-                       align="center"
-                       width="130">
-        <template slot-scope="{row}">
-          <span>{{row.pre_pay}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="数量"
-                       align="center"
-                       width="80">
-        <template slot-scope="{row}">
-          <span>{{row.amount}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="产品货期"
-                       align="center"
-                       width="80">
-        <template slot-scope="{row}">
-          <span>{{row.product_date}}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建人"
@@ -115,6 +58,69 @@
           </span>
         </template>
       </el-table-column>
+      <el-table-column label="项目编号"
+                       align="center"
+                       width="80">
+        <template slot-scope="{row}">
+          <span>
+            {{row.project_no}}
+          </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="产品类型"
+                       align="center"
+                       width="80">
+        <template slot-scope="{row}">
+          <span>{{row.category_name}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品型号"
+                       align="center"
+                       width="150">
+        <template slot-scope="{row}">
+          <span>{{row.product_name}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品单价"
+                       align="center"
+                       width="130">
+        <template slot-scope="{row}">
+          <span>{{row.product_price}}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="产品货期"
+                       align="center"
+                       width="80">
+        <template slot-scope="{row}">
+          <span>{{row.product_date}}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="数量"
+                       align="center"
+                       width="80">
+        <template slot-scope="{row}">
+          <span>{{row.amount}}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="订单总价"
+                       align="center"
+                       width="130">
+        <template slot-scope="{row}">
+          <span>{{row.order.total_pay }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单总预付款"
+                       align="center"
+                       width="130">
+        <template slot-scope="{row}">
+          <span>{{row.order.total_pre_pay }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="附件"
                        align="center"
                        width="200">
@@ -160,15 +166,7 @@
 
         </template>
       </el-table-column>
-      <el-table-column label="状态"
-                       width="200"
-                       align="center">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusMap">
-            {{ row.status_cn }}
-          </el-tag>
-        </template>
-      </el-table-column>
+
       <el-table-column label="操作"
                        align="center"
                        width="250"
@@ -194,6 +192,17 @@
           </el-button>
         </template>
       </el-table-column>
+
+      <el-table-column label="状态"
+                       width="200"
+                       align="center">
+        <template slot-scope="{row}">
+          <el-tag :type="row.status | statusMap">
+            {{ row.status_cn }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
     </el-table>
 
     <el-dialog title="物料编号"
@@ -274,8 +283,8 @@ export default {
           "name": "订单编号",
         },
         {
-          "key": "orderItems.sale_num",
-          "name": "需求编号",
+          "key": "project_no",
+          "name": "项目编号",
         },
         {
           "key": "orderItems.filter_username",
@@ -309,7 +318,7 @@ export default {
   },
   created () {
     if (this.$route.query.source_id) {
-      this.listQuery.filter_col = 'order_num'
+      this.listQuery.filter_col = 'project_no'
       this.listQuery.filter_val = this.$route.query.source_id
     }
     this.getList()
@@ -332,7 +341,7 @@ export default {
       this.numForm.item_id = row.id
     },
     arraySpanMethod ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex <= 3 || (columnIndex >= 13 & columnIndex <= 14)) {
+      if (columnIndex <= 5 || (columnIndex >= 11 & columnIndex <= 14)) {
         if (row.is_start) {
           return [row.order.order_items_count, 1];
         } else {
@@ -362,7 +371,7 @@ export default {
     search (row) {
       let routeData = this.$router.resolve({
         path: '/material/category',
-        query: { category_name: row.sale_request.product_type }
+        query: { category_name: row.category_name }
       });
       window.open(routeData.href, '_blank');
     },

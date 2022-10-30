@@ -8,7 +8,6 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: '',
   }
 }
 
@@ -50,9 +49,8 @@ const actions = {
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-        const { name, avatar,role } = data
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+        const { username} = data
+        commit('SET_NAME', username)
         resolve(data)
       }).catch(error => {
         reject(error)

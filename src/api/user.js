@@ -63,3 +63,12 @@ export function deleteUser(id) {
     method: 'delete'
   })
 }
+
+
+export function resetPass(data) {
+  return request({
+    url: `/api/resetPass`,
+    method: 'post',
+    data
+  })
+}

@@ -57,13 +57,7 @@
           <span class="link-type">{{ row.customer_name }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="项目节点"
-                       width="170"
-                       align="center">
-        <template slot-scope="{row}">
-          <span class="link-type">{{ row.project_duration}} </span>
-        </template>
-      </el-table-column> -->
+
       <el-table-column label="需求产品"
                        width="200"
                        align="center">
@@ -71,20 +65,6 @@
           <span class="link-type">{{ row.product_name }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="项目预估金额"
-                       width="150"
-                       align="center">
-        <template slot-scope="{row}">
-          <span class="link-type">{{ row.cost }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="需求创建时间"
-                       width="160"
-                       align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.created_at}}</span>
-        </template>
-      </el-table-column> -->
       <el-table-column label="创建人"
                        width="120"
                        align="center">

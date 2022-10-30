@@ -196,11 +196,11 @@ export default {
         ids.push(this.fileList[i].id)
       }
       this.material.file_ids = ids.join()
-      console.log(this.material)
+
       this.$nextTick(() => {
         this.$refs['materialForm'].validate((valid) => {
           if (valid) {
-            console.log(this.material)
+
             addMaterial(this.material).then(response => {
               this.handleClose()
             })

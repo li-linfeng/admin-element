@@ -8,17 +8,25 @@ export function getPreSaleList(query) {
   })
 }
 
-export function updatePreSale(id, data) {
+export function bindSale(id, data) {
   return request({
-    url: `/api/preSales/${id}`,
-    method: 'put',
+    url: `/api/sale_requests/${id}/bind_pre_sales`,
+    method: 'post',
     data
   })
 }
 
-export function modifyPreSaleStatus(id, data) {
+export function ReturnSaleRequest(id, data) {
   return request({
-    url: `/api/preSales/${id}/status`,
+    url: `/api/sale_requests/${id}/return`,
+    method: 'post',
+    data
+  })
+}
+
+export function FinishSaleRequest(id, data) {
+  return request({
+    url: `/api/sale_requests/${id}/finish`,
     method: 'post',
     data
   })

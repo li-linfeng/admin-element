@@ -47,7 +47,7 @@
                        align="center"
                        width="120">
         <template slot-scope="{row}">
-          <span>{{row.customer_type }}</span>
+          <span>{{row.customer_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品类型"
@@ -125,6 +125,7 @@
           </el-button>
           <el-button size="mini"
                      type="primary"
+                     v-if="row.status == 'open' || row.status=='return' "
                      @click="showDialog('update',row)">
             修改
           </el-button>
@@ -134,7 +135,8 @@
                        width="90"
                        align="center">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusMap">
+          <el-tag :type="row.status | statusMap"
+                  @click="showStatus(row)">
             {{ row.status_cn }}
           </el-tag>
         </template>
@@ -156,7 +158,7 @@
                style="width:1200px; height:800px;margin-left:50px;"
                :rules="rules">
         <el-form-item label="项目编号"
-                      prop="project_id">
+                      prop="project_no">
           <el-input v-model="tmp.project_no"
                     class="small_input"
                     :disabled="editable[dialogAction]" />
@@ -294,6 +296,29 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="退回原因"
+               :visible.sync="showReturnReasonDialog"
+               width="30%">
+      <el-form ref="closeForm"
+               :model="closeForm"
+               label-position="left"
+               label-width="100px"
+               style="width: 400px; margin-left:50px;">
+        <el-form-item label="退回原因">
+          <el-input v-model="closeForm.return_reason"
+                    type="textarea"
+                    disabled
+                    :rows="4" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="showReturnReasonDialog = false">
+          取消
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -323,6 +348,10 @@ export default {
       list: null,
       description: "",
       downloadLoading: false,
+      showReturnReasonDialog: false,
+      closeForm: {
+        return_reason: ""
+      },
       total: 0,
       actions: {
         'add': '+新需求',
@@ -360,7 +389,7 @@ export default {
           "name": "项目编号",
         },
         {
-          "key": "project.filter_customer_name",
+          "key": "customer_name",
           "name": "客户名称",
         },
         {
@@ -394,7 +423,6 @@ export default {
       tmp: {
         project_no: "",
         product_type: [],
-        customer_type: "",
         expect_time: "",
         device_name: "",
         shaft_one_diameter_tolerance: "",
@@ -409,20 +437,25 @@ export default {
         remark: "",
       },
       rules: {
-        sale_num: [{ required: true, message: '请填写需求编号', trigger: 'change' }],
-        customer_type: [{ required: true, message: '请填写客户名称', trigger: 'change' }],
+        project_no: [{ required: true, message: '请填写项目编号', trigger: 'change' }],
         product_type: [{ required: true, message: '请填写产品性质', trigger: 'change' }],
       },
     }
   },
   created () {
     if (this.$route.query.source_id) {
-      this.listQuery.filter_col = 'sale_num'
+      this.listQuery.filter_col = 'project_no'
       this.listQuery.filter_val = this.$route.query.source_id
     }
     this.getList()
   },
   methods: {
+    showStatus (row) {
+      if (row.status == 'return') {
+        this.closeForm.return_reason = row.return_reason
+        this.showReturnReasonDialog = true
+      }
+    },
     handleDownload () {
       this.downloadLoading = true
       exportSaleRequest(this.listQuery).then((res) => {

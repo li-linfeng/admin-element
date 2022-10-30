@@ -69,19 +69,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import { getNewsList, getToDoList, readTodo, readAll } from '@/api/news'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Weather from '@/components/Weather' // secondary package based on el-pagination
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
   components: { Pagination, Weather },
-  computed: {
-    ...mapGetters([
-      'name'
-    ])
-  },
   data () {
     return {
       messages: [],
@@ -111,11 +106,24 @@ export default {
       },
     }
   },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
+  },
   created () {
+    this.getUserInfo()
     this.getList()
     this.toDo()
   },
   methods: {
+    getUserInfo () {
+
+      // console.log(222)
+      // if (!this.name) {
+      //   this.$store.dispatch('user/getInfo')
+      // }
+    },
     readAllTodo () {
       readAll().then(res => {
         this.activeName = 'pre_sale'
