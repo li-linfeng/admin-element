@@ -155,7 +155,7 @@
                :model="tmp"
                label-position="left"
                label-width="140px"
-               style="width:1200px;min-width: 1200px; height:800px;margin-left:50px;"
+               style="width:1200px;min-width:1200px; height:800px;margin-left:50px;"
                :rules="rules">
         <el-form-item label="项目编号"
                       prop="project_no">
@@ -582,5 +582,9 @@ export default {
   tr.el-table__row--striped.el-table__row--striped.el-table__row--striped
   td {
   background-color: #f0f9eb; /*替换为你需要的颜色，觉得优先级不够就加!important*/
+}
+
+.el-dialog {
+  width: 800px;
 }
 </style>
