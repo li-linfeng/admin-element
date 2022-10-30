@@ -10,7 +10,8 @@
             class="text item"
             :key="message.id">{{message.title }} <button size="mini"
                   type="primary"
-                  style="float:right">{{message.created_at}}</button><span style="float:right">{{message.created_at}}</span></li>
+                  style="float:right;margin-left: 5px;"
+                  @click="showNews(message)">查看</button><span style="float:right;">{{message.created_at}}</span></li>
       </ul>
       <pagination v-show="total>0"
                   :total="total"
@@ -65,6 +66,21 @@
                   @pagination="toDo" />
     </el-card>
 
+    <el-dialog title="要闻详情"
+               :visible.sync="newsVisible"
+               width="30%">
+      <div style="width:400px;height:300px"
+           class="dialog-header">
+        <div v-html="content"
+             style="line-height:16px"></div>
+      </div>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="newsVisible = false">
+          取消
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -80,6 +96,8 @@ export default {
   data () {
     return {
       messages: [],
+      newsVisible: false,
+      content: '',
       total: 0,
       todo_total: 0,
       todo_list: [],
@@ -112,17 +130,13 @@ export default {
     ])
   },
   created () {
-    this.getUserInfo()
     this.getList()
     this.toDo()
   },
   methods: {
-    getUserInfo () {
-
-      // console.log(222)
-      // if (!this.name) {
-      //   this.$store.dispatch('user/getInfo')
-      // }
+    showNews (mes) {
+      this.newsVisible = true
+      this.content = mes.content
     },
     readAllTodo () {
       readAll().then(res => {

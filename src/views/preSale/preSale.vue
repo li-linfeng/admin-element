@@ -533,7 +533,7 @@ export default {
         product_date: [{ required: true, message: '请输入产品货期', trigger: 'blur' }],
       },
       order_rules: {
-        order_num: [{ required: true, message: '请填写名称', trigger: 'change' }],
+        order_num: [{ required: true, message: '请填写名称', trigger: 'blur' }],
         items: [{ required: true, message: '请选择一个销售需求', trigger: 'blur' }],
         total_pay: [{ required: true, message: '请输入产品总价', trigger: 'blur' }],
         total_pre_pay: [{ required: true, message: '请输入预付款', trigger: 'blur' }],

@@ -155,7 +155,7 @@
                :model="tmp"
                label-position="left"
                label-width="140px"
-               style="width:1200px; height:800px;margin-left:50px;"
+               style="width:1200px;min-width: 1200px; height:800px;margin-left:50px;"
                :rules="rules">
         <el-form-item label="项目编号"
                       prop="project_no">
@@ -187,7 +187,7 @@
         <label class="el-form-item__label"
                style="width:700px;font-size: 20px;margin-bottom: 10px;display: block;">应用条件:</label>
 
-        <div style="height:400px">
+        <div style="height:400px;width: 800px;">
           <el-form-item label="设备名称"
                         prop="device_name"
                         class="small_input">
@@ -437,8 +437,8 @@ export default {
         remark: "",
       },
       rules: {
-        project_no: [{ required: true, message: '请填写项目编号', trigger: 'change' }],
-        product_type: [{ required: true, message: '请填写产品性质', trigger: 'change' }],
+        project_no: [{ required: true, message: '请填写项目编号', trigger: 'blur' }],
+        product_type: [{ required: true, message: '请填写产品性质', trigger: 'blur' }],
       },
     }
   },

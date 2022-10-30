@@ -136,7 +136,7 @@
                label-width="110px"
                style="width: 400px; margin-left:50px;">
         <el-form-item label="项目编号"
-                      prop="name">
+                      prop="project_no">
           <el-input v-model="tmp.project_no"
                     :disabled="action=='detail'" />
         </el-form-item>
@@ -307,10 +307,10 @@ export default {
       },
       dialogFormVisible: false,
       rules: {
-        project_no: [{ required: true, message: '请填写项目编号', trigger: 'change' }],
-        name: [{ required: true, message: '请填写项目名称', trigger: 'change' }],
-        product_name: [{ required: true, message: '请填写需求产品', trigger: 'change' }],
-        customer_name: [{ required: true, message: '请填写客户名称', trigger: 'change' }],
+        project_no: [{ required: true, message: '请填写项目编号', trigger: 'blur' }],
+        name: [{ required: true, message: '请填写项目名称', trigger: 'blur' }],
+        product_name: [{ required: true, message: '请填写需求产品', trigger: 'blur' }],
+        customer_name: [{ required: true, message: '请填写客户名称', trigger: 'blur' }],
       },
     }
   },

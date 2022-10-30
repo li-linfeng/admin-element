@@ -150,7 +150,7 @@
           <span>{{row.material_number}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Boom&图纸"
+      <el-table-column label="BOM&图纸"
                        align="center"
                        width="200">
         <template slot-scope="{row}">
@@ -311,7 +311,7 @@ export default {
         material_number: ""
       },
       rules: {
-        name: [{ required: true, message: '请填写名称', trigger: 'change' }],
+        name: [{ required: true, message: '请填写名称', trigger: 'blur' }],
         description: [{ required: true, message: '请填写描述', trigger: 'blur' }],
       },
     }
