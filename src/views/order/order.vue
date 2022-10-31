@@ -23,35 +23,35 @@
               style="width: 100%; max-width: 1600px;margin-top: 25px;">
       <el-table-column label="序号"
                        align="center"
-                       width="190">
+                       width="50">
         <template slot-scope="{row}">
           <span>{{row.order.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="订单编号"
                        align="center"
-                       width="190">
+                       width="130">
         <template slot-scope="{row}">
           <span>{{row.order.order_num }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间"
                        align="center"
-                       width="190">
+                       width="100">
         <template slot-scope="{row}">
           <span>{{row.order.created_at }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建人"
                        align="center"
-                       width="80">
+                       width="70">
         <template slot-scope="{row}">
           <span>{{row.user.username}}</span>
         </template>
       </el-table-column>
       <el-table-column label="处理人"
                        align="center"
-                       width="80">
+                       width="70">
         <template slot-scope="{row}">
           <span>
             {{row.handler?row.handler.username :""}}
@@ -60,7 +60,7 @@
       </el-table-column>
       <el-table-column label="项目编号"
                        align="center"
-                       width="80">
+                       width="130">
         <template slot-scope="{row}">
           <span>
             {{row.project_no}}
@@ -76,15 +76,15 @@
         </template>
       </el-table-column>
       <el-table-column label="产品型号"
-                       align="center"
-                       width="150">
+                       align="left"
+                       width="360">
         <template slot-scope="{row}">
           <span>{{row.product_name}}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品单价"
                        align="center"
-                       width="130">
+                       width="110">
         <template slot-scope="{row}">
           <span>{{row.product_price}}</span>
         </template>
@@ -100,7 +100,7 @@
 
       <el-table-column label="数量"
                        align="center"
-                       width="80">
+                       width="50">
         <template slot-scope="{row}">
           <span>{{row.amount}}</span>
         </template>
@@ -108,14 +108,14 @@
 
       <el-table-column label="订单总价"
                        align="center"
-                       width="130">
+                       width="120">
         <template slot-scope="{row}">
           <span>{{row.order.total_pay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="订单总预付款"
                        align="center"
-                       width="130">
+                       width="120">
         <template slot-scope="{row}">
           <span>{{row.order.total_pre_pay }}</span>
         </template>
@@ -145,18 +145,18 @@
       </el-table-column>
       <el-table-column label="物料编号"
                        align="center"
-                       width="200">
+                       width="120">
         <template slot-scope="{row}">
           <span>{{row.material_number}}</span>
         </template>
       </el-table-column>
       <el-table-column label="BOM&图纸"
                        align="center"
-                       width="200">
+                       width="120">
         <template slot-scope="{row}">
           <el-button :loading="downloadLoading"
                      size="mini"
-                     style="margin:0 0 20px 20px;"
+                     style="margin:0 auto;"
                      type="primary"
                      :disabled="row.material_number ==''"
                      icon="el-icon-document"
@@ -194,7 +194,7 @@
       </el-table-column>
 
       <el-table-column label="状态"
-                       width="200"
+                       width="80"
                        align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusMap">

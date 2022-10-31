@@ -37,20 +37,20 @@
               style="width: 100%; max-width: 1600px;">
       <el-table-column label="编号"
                        align="center"
-                       width="100">
+                       width="50">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="模块"
                        align="center"
-                       width="200">
+                       width="120">
         <template slot-scope="{row}">
           <span>{{row.module_cn }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品种类"
-                       width="200"
+                       width="120"
                        align="center">
         <template slot-scope="{row}">
           <span>{{row.product_type }}</span>

@@ -34,7 +34,7 @@
               style="width: 100%; max-width: 1600px;">
       <el-table-column label="编号"
                        align="center"
-                       width="100">
+                       width="50">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
@@ -48,14 +48,14 @@
         </template>
       </el-table-column>
       <el-table-column label="创建时间"
-                       width="200"
+                       width="120"
                        align="center">
         <template slot-scope="{row}">
           <span>{{row.created_at }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态"
-                       width="200"
+                       width="100"
                        align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusMap">
@@ -93,7 +93,7 @@
                :model="tmp"
                label-position="left"
                label-width="70px"
-               style="width:800px; margin-left:50px;">
+               style="width:600px; margin-left:50px;">
         <el-form-item label="标题"
                       prop="name">
           <el-input v-model="tmp.title" />

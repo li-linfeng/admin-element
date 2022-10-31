@@ -18,11 +18,11 @@
               :header-cell-class-name="headerStyle"
               :row-class-name="tableRowStyle"
               :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-      <el-table-column align="center"
+      <el-table-column align="left"
                        prop="id"
                        label="编号"
                        sortable
-                       width="100">
+                       width="130">
         <template slot-scope="{row}">
           <span>{{ row.index }}</span>
         </template>
@@ -30,29 +30,30 @@
 
       <el-table-column align="center"
                        label="物料号"
-                       width="200">
+                       width="120">
         <template slot-scope="{row}">
           <span>{{ row.name}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center"
+      <el-table-column align="left"
                        label="描述"
-                       width="300">
+                       width="400">
         <template slot-scope="{row}">
           {{ row.description}}
         </template>
       </el-table-column>
       <el-table-column align="center"
                        label="物料属性"
-                       width="200">
+                       width="100">
         <template slot-scope="{row}">
-          {{ row.type | typesMap}}
+          {{ row.property}}
+          <!-- 202210311629改了上一行内容 -->
         </template>
       </el-table-column>
 
       <el-table-column align="center"
                        label="数量"
-                       width="100">
+                       width="60">
         <template slot-scope="{row}">
           {{ row.amount}}
         </template>
@@ -103,11 +104,12 @@
       <el-form ref="combineForm"
                :model="combine"
                label-position="left"
-               label-width="120px"
-               style="width: 400px; margin-left:50px;">
+               label-width="100px"
+               style="width: 400px; margin-left:10px;">
         <el-form-item label="搜索">
           <el-input placeholder="输入关键字进行过滤"
-                    v-model="filterText">
+                    v-model="filterText"
+                    style="width:400px">
           </el-input>
           <el-tree :data="tree"
                    :check-strictly="true"
@@ -117,7 +119,7 @@
                    @check-change="checkChange"
                    :filter-node-method="filterNode"
                    :expand-on-click-node="false"
-                   style="margin-top:20px"
+                   style="margin-top:20px; width:500px"
                    ref="tree">
             <span class="custom-tree-node"
                   slot-scope="{ node }">
@@ -366,7 +368,7 @@ export default {
 }
 .cate-div {
   max-width: 1200px;
-  margin: 100px auto;
+  margin: 20px auto;
 }
 
 .small_input {

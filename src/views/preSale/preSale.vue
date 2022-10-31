@@ -32,7 +32,7 @@
 
       <el-table-column label="序号"
                        align="center"
-                       width="80">
+                       width="100">
         <template slot-scope="{row}">
           <el-radio v-model="selectRow"
                     @change="handleItemsChange"
@@ -43,7 +43,7 @@
       </el-table-column>
       <el-table-column label="项目编号"
                        align="center"
-                       width="100">
+                       width="130">
         <template slot-scope="{row}">
           <span>{{row.project_no }}</span>
         </template>
@@ -57,14 +57,14 @@
       </el-table-column>
       <el-table-column label="创建人"
                        align="center"
-                       width="80">
+                       width="70">
         <template slot-scope="{row}">
           <span>{{row.user_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="处理人"
                        align="center"
-                       width="80">
+                       width="70">
         <template slot-scope="{row}">
           <span>{{row.handler_name}}</span>
         </template>
@@ -72,15 +72,15 @@
 
       <el-table-column label="产品类型"
                        align="center"
-                       width="120">
+                       width="80">
         <template slot-scope="{row}">
           <span>{{row.category }}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="产品型号"
-                       align="center"
-                       width="150">
+                       align="left"
+                       width="400">
         <template slot-scope="{row}">
           <span>{{row.product_name }}</span>
         </template>
@@ -96,7 +96,7 @@
 
       <el-table-column label="产品货期"
                        align="center"
-                       width="120">
+                       width="85">
         <template slot-scope="{row}">
           <span>{{row.product_date }}</span>
         </template>
@@ -104,7 +104,7 @@
 
       <el-table-column label="附件"
                        align="center"
-                       width="200">
+                       width="80">
         <template slot-scope="{row}">
           <div v-for="item in row.uploads"
                :key="item.name">
@@ -143,7 +143,7 @@
         </template>
       </el-table-column>
       <el-table-column label="状态"
-                       width="100"
+                       width="70"
                        align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusMap">

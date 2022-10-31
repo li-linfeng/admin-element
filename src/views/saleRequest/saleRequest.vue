@@ -31,14 +31,14 @@
 
       <el-table-column label="序号"
                        align="center"
-                       width="100">
+                       width="50">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="项目编号"
                        align="center"
-                       width="200">
+                       width="130">
         <template slot-scope="{row}">
           <span>{{row.project_no }}</span>
         </template>
@@ -52,7 +52,7 @@
       </el-table-column>
       <el-table-column label="产品类型"
                        align="center"
-                       width="120">
+                       width="80">
         <template slot-scope="{row}">
           <span v-for="item in row.product_type_arr"
                 :key="item"
@@ -61,7 +61,7 @@
       </el-table-column>
       <el-table-column label="希望货期"
                        align="center"
-                       width="120">
+                       width="80">
         <template slot-scope="{row}">
           <span>{{row.expect_time }}</span>
         </template>
@@ -83,14 +83,14 @@
       </el-table-column>
       <el-table-column label="创建人"
                        align="center"
-                       width="120">
+                       width="70">
         <template slot-scope="{row}">
           <span>{{row.user.username }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间"
                        align="center"
-                       width="160">
+                       width="100">
         <template slot-scope="{row}">
           <span>{{row.created_at }}</span>
         </template>
@@ -132,7 +132,7 @@
         </template>
       </el-table-column>
       <el-table-column label="状态"
-                       width="90"
+                       width="70"
                        align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusMap"

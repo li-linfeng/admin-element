@@ -9,10 +9,11 @@
                :model="material"
                label-position="left"
                label-width="120px"
-               style="width: 400px; margin-left:50px;">
+               style="width: 400px; margin-left:20px;">
         <el-form-item label="物料类型"
                       prop="type">
           <el-select v-model="material.type"
+                     style="width:120px"
                      placeholder="请选择">
             <el-option v-for="item in material_types[dialogType]"
                        class="el-item"
@@ -43,6 +44,7 @@
                       prop="property">
           <el-select v-model="material.property"
                      clearable
+                     style="width:120px"
                      placeholder="请选择">
             <el-option v-for="item in property_options"
                        :key="item.value"
@@ -56,6 +58,7 @@
                       prop="description">
           <el-input v-model="material.description"
                     type="textarea"
+                    style="width:300px"
                     :rows="4"
                     class="small_input el-item" />
 

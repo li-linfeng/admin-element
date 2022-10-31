@@ -28,14 +28,14 @@
               style="width: 100%; max-width: 1600px;">
       <el-table-column label="编号"
                        align="center"
-                       width="80">
+                       width="50">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="昵称"
                        align="center"
-                       width="80">
+                       width="200">
         <template slot-scope="{row}">
           <span>{{row.username }}</span>
         </template>

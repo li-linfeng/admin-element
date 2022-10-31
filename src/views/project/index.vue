@@ -30,7 +30,7 @@
       <el-table-column label="序号"
                        prop="id"
                        align="center"
-                       width="80">
+                       width="50">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
@@ -38,20 +38,20 @@
       <el-table-column label="项目编号"
                        prop="id"
                        align="center"
-                       width="200">
+                       width="130">
         <template slot-scope="{row}">
           <span>{{row.project_no }}</span>
         </template>
       </el-table-column>
       <el-table-column label="项目名称"
-                       width="150"
+                       width="200"
                        align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="客户名"
-                       width="150"
+                       width="120"
                        align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.customer_name }}</span>
@@ -59,14 +59,14 @@
       </el-table-column>
 
       <el-table-column label="需求产品"
-                       width="200"
+                       width="160"
                        align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.product_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建人"
-                       width="120"
+                       width="80"
                        align="center">
         <template slot-scope="{row}">
           <span>{{ row.user.username ? row.user.username: "" }}</span>

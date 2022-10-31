@@ -10,7 +10,7 @@
             class="text item"
             :key="message.id">{{message.title }} <button size="mini"
                   type="primary"
-                  style="float:right;margin-left: 5px;"
+                  style="float:right;margin: 0 0 0 10px;font-size:8px"
                   @click="showNews(message)">查看</button><span style="float:right;">{{message.created_at}}</span></li>
       </ul>
       <pagination v-show="total>0"
@@ -22,8 +22,7 @@
 
     <Weather></Weather>
 
-    <el-card class="box-card"
-             style="width:800pxl;height: 800px;">
+    <el-card class="box-card" style="height:750px">
       <div slot="header"
            class="clearfix">
         <span>每日待办</span>
@@ -208,9 +207,9 @@ export default {
 
 .box-card {
   float: left;
-  margin-right: 200px;
+  margin-right: 2%;
   margin-bottom: 20px;
-  width: 600px;
+  width: 47%;
   height: 409px;
 }
 </style>
