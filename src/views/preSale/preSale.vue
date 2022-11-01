@@ -45,7 +45,7 @@
                        align="center"
                        width="130">
         <template slot-scope="{row}">
-          <span>{{row.project_no }}</span>
+          <router-link :to="{path:'/sale_request/saleRequest', query: { source_id: row.project_no }}">{{row.project_no }}</router-link>
         </template>
       </el-table-column>
       <el-table-column label="客户名称"
@@ -161,7 +161,8 @@
                 @pagination="getList" />
 
     <el-dialog title="新增"
-               :visible.sync="preSaleDialogFormVisible">
+               :visible.sync="preSaleDialogFormVisible"
+               style="width:700px">
       <el-form ref="dataForm"
                :model="pre_sale_item"
                :rules="tmp_rules"
@@ -621,7 +622,7 @@ export default {
       })
     },
     arraySpanMethod ({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex <= 5 || columnIndex >= 11) {
+      if (columnIndex <= 4 || columnIndex >= 10) {
         if (row.is_start) {
           return [row.pre_sale_count, 1];
         } else {
@@ -731,6 +732,9 @@ export default {
 </script>
 
 <style>
+.el-dialog {
+  width: 700px;
+}
 .filter-container {
   margin-bottom: 20px;
 }

@@ -62,9 +62,7 @@
                        align="center"
                        width="130">
         <template slot-scope="{row}">
-          <span>
-            {{row.project_no}}
-          </span>
+          <router-link :to="{path:'/pre_sale/preSale', query: { source_id: row.project_no }}">{{row.project_no }}</router-link>
         </template>
       </el-table-column>
 

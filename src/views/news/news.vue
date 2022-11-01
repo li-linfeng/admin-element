@@ -102,6 +102,7 @@
                       label="内容">
           <mavon-editor style="height:600px"
                         v-model="tmp.md_content"
+                        @imgAdd="$imgAdd"
                         ref="md"
                         :toolbars="markdownOption" />
         </el-form-item>
@@ -121,6 +122,7 @@
 
 <script>
 import { getNewsList, createNews, updateNews, deleteNews } from '@/api/news'
+import { uploadFile } from '@/api/upload'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
@@ -204,6 +206,16 @@ export default {
     this.getList()
   },
   methods: {
+    $imgAdd (pos, $file) {
+      let fd = new FormData();
+      fd.append('file', $file);//传文件
+      fd.append('type', 'image');//传文件
+      fd.append('source_type', 'news');//传文件
+      uploadFile(fd).then(res => {
+
+        this.$refs.md.$img2Url(pos, res.data.url);
+      })
+    },
     getList () {
       return getNewsList(this.listQuery).then(response => {
         this.list = response.data
@@ -276,6 +288,9 @@ export default {
 .filter-item {
   margin-left: 5px;
   margin-right: 15px;
+}
+.el-dialog {
+  width: 800px;
 }
 
 textarea,

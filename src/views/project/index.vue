@@ -255,8 +255,8 @@ export default {
       close_row_id: 0,
       cols: [
         {
-          "key": "id",
-          "name": "编号",
+          "key": "project_no",
+          "name": "项目编号",
         },
         {
           "key": "name",
@@ -315,6 +315,10 @@ export default {
     }
   },
   created () {
+    if (this.$route.query.source_id) {
+      this.listQuery.filter_col = 'project_no'
+      this.listQuery.filter_val = this.$route.query.source_id
+    }
     this.getList()
   },
   methods: {

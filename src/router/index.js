@@ -132,7 +132,7 @@ export const asyncRoutes = [
         path: 'role',
         component: () => import('@/views/role/role'),
         name: 'Role',
-        meta: { title: '角色', icon: 'el-icon-money', api:"api.roles" }
+        meta: { title: '角色', icon: 'el-icon-s-opportunity', api:"api.roles" }
       }
     ]
   },
@@ -144,7 +144,7 @@ export const asyncRoutes = [
         path: 'user',
         component: () => import('@/views/user/user'),
         name: 'User',
-        meta: { title: '用户', icon: 'el-icon-money', api:"api.users" }
+        meta: { title: '用户', icon: 'el-icon-user', api:"api.users" }
       }
     ]
   },
@@ -156,7 +156,7 @@ export const asyncRoutes = [
         path: 'handler',
         component: () => import('@/views/handler/handler'),
         name: 'Handler',
-        meta: { title: '人员管理', icon: 'el-icon-money', api:"api.handlers" }
+        meta: { title: '人员管理', icon: 'el-icon-s-custom', api:"api.handlers" }
       }
     ]
   },
@@ -168,7 +168,7 @@ export const asyncRoutes = [
         path: 'news',
         component: () => import('@/views/news/news'),
         name: 'News',
-        meta: { title: '每日要闻', icon: 'el-icon-money', api:"api.news" }
+        meta: { title: '每日要闻', icon: 'el-icon-news', api:"api.news" }
       }
     ]
   },

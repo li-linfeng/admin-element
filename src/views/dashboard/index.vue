@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <el-card class="box-card">
+    <el-card class="box-card-news">
       <div slot="header"
            class="clearfix">
         <span>每日要闻</span>
@@ -22,7 +22,8 @@
 
     <Weather></Weather>
 
-    <el-card class="box-card" style="height:750px">
+    <el-card class="box-card"
+             style="height:750px">
       <div slot="header"
            class="clearfix">
         <span>每日待办</span>
@@ -67,11 +68,12 @@
 
     <el-dialog title="要闻详情"
                :visible.sync="newsVisible"
-               width="30%">
-      <div style="width:400px;height:300px"
+               id="news_dia">
+      <div style="width:800px;height:300px"
            class="dialog-header">
         <div v-html="content"
-             style="line-height:16px"></div>
+             style="line-height:16px"
+             id="news_content"></div>
       </div>
       <div slot="footer"
            class="dialog-footer">
@@ -174,7 +176,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .dashboard {
   &-container {
     margin: 30px;
@@ -205,6 +207,14 @@ export default {
   clear: both;
 }
 
+.box-card-news {
+  float: left;
+  margin-right: 2%;
+  margin-bottom: 20px;
+  width: 47%;
+  height: 409px;
+}
+
 .box-card {
   float: left;
   margin-right: 2%;
@@ -212,4 +222,8 @@ export default {
   width: 47%;
   height: 409px;
 }
+
+// #news_dia .el-dialog {
+//   width: 800px;
+// }
 </style>
