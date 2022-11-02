@@ -187,6 +187,10 @@ export default {
   }
 }
 
+.el-dialog {
+  width: 800px !important;
+}
+
 .news-content {
   height: 251px;
 }
@@ -223,7 +227,10 @@ export default {
   height: 409px;
 }
 
-// #news_dia .el-dialog {
-//   width: 800px;
-// }
+#news_content > p {
+  width: 700px;
+}
+#news_content > p img {
+  width: 500px;
+}
 </style>
