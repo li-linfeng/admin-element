@@ -20,17 +20,18 @@
               fit
               highlight-current-row
               :span-method="arraySpanMethod"
-              style="width: 100%; max-width: 1600px;margin-top: 25px;">
+              style="width: 100%; margin-top: 25px;"
+              :header-cell-style="{'text-align':'center'}">
       <el-table-column label="序号"
                        align="center"
-                       width="50">
+                       width="60">
         <template slot-scope="{row}">
           <span>{{row.order.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="订单编号"
                        align="center"
-                       width="130">
+                       width="150">
         <template slot-scope="{row}">
           <span>{{row.order.order_num }}</span>
         </template>
@@ -60,7 +61,7 @@
       </el-table-column>
       <el-table-column label="项目编号"
                        align="center"
-                       width="130">
+                       width="150">
         <template slot-scope="{row}">
           <router-link :to="{path:'/pre_sale/preSale', query: { source_id: row.project_no }}">{{row.project_no }}</router-link>
         </template>
@@ -68,14 +69,14 @@
 
       <el-table-column label="产品类型"
                        align="center"
-                       width="80">
+                       width="100">
         <template slot-scope="{row}">
           <span>{{row.category_name}}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品型号"
                        align="left"
-                       width="360">
+                       width="400">
         <template slot-scope="{row}">
           <span>{{row.product_name}}</span>
         </template>
@@ -90,7 +91,7 @@
 
       <el-table-column label="产品货期"
                        align="center"
-                       width="80">
+                       width="110">
         <template slot-scope="{row}">
           <span>{{row.product_date}}</span>
         </template>
@@ -98,7 +99,7 @@
 
       <el-table-column label="数量"
                        align="center"
-                       width="50">
+                       width="60">
         <template slot-scope="{row}">
           <span>{{row.amount}}</span>
         </template>
@@ -167,27 +168,37 @@
 
       <el-table-column label="操作"
                        align="center"
-                       width="250"
+                       width="120"
                        class-name="small-padding ">
         <template slot-scope="{row}">
-          <el-button size="mini"
+          <el-dropdown><el-button type="primary">操作</el-button>
+          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>
+            <el-button size="mini"
                      type="primary"
                      v-if="row.status == 'open'"
                      @click="search(row)">
             查询
-          </el-button>
-          <el-button size="mini"
+            </el-button>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <el-button size="mini"
                      type="info"
                      v-if="row.status == 'open'"
                      @click="bindMaterial(row)">
             处理
-          </el-button>
-          <el-button size="mini"
+            </el-button>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <el-button size="mini"
                      type="success"
                      v-if="row.status == 'open'"
                      @click="finishItem(row)">
             完成
-          </el-button>
+           </el-button>
+          </el-dropdown-item>
+          </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
 

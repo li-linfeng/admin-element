@@ -1,5 +1,5 @@
 <template lang="">
-	<el-card shadow="hover" class ="box-card" >
+	<el-card shadow="hover" class ="box-card-2" >
 	  <div slot="header"
            class="clearfix">
         <span>每日天气</span>

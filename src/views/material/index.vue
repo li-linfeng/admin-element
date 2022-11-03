@@ -17,12 +17,13 @@
               default-expand-all
               :header-cell-class-name="headerStyle"
               :row-class-name="tableRowStyle"
-              :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+              :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+              :header-cell-style="{'text-align':'center'}">
       <el-table-column align="left"
                        prop="id"
                        label="编号"
                        sortable
-                       width="130">
+                       width="150">
         <template slot-scope="{row}">
           <span>{{ row.index }}</span>
         </template>
@@ -37,7 +38,7 @@
       </el-table-column>
       <el-table-column align="left"
                        label="描述"
-                       width="400">
+                       width="570">
         <template slot-scope="{row}">
           {{ row.description}}
         </template>
@@ -62,30 +63,42 @@
                        align="center"
                        class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini"
-                     type="warning"
-                     v-if="row.code == 'XX'"
-                     @click="showAddMaterialDialog(row,'component')">
-            添加零件
-          </el-button>
-          <el-button type="primary"
-                     size="mini"
-                     v-if="row.type != 'category' && row.has_child >0"
-                     @click="showAddMaterialDialog(row)">
-            添加子组件
-          </el-button>
-          <el-button size="mini"
-                     type="success"
-                     v-if="row.type != 'category' && row.has_child >0"
-                     @click="showChoose(row)">
-            选择子组件
-          </el-button>
-          <el-button size="mini"
-                     type="primary"
-                     v-if="row.code != 'XX' && row.type == 'category'"
-                     @click="showAddMaterialDialog(row)">
-            添加产品
-          </el-button>
+          <el-dropdown><el-button type="primary">操作</el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <el-button size="mini"
+                          type="warning"
+                          v-if="row.code == 'XX'"
+                          @click="showAddMaterialDialog(row,'component')">
+                  添加零件
+                </el-button>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-button type="primary"
+                        size="mini"
+                        v-if="row.type != 'category' && row.has_child >0"
+                        @click="showAddMaterialDialog(row)">
+                添加子组件
+              </el-button>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-button size="mini"
+                        type="success"
+                        v-if="row.type != 'category' && row.has_child >0"
+                        @click="showChoose(row)">
+                选择子组件
+              </el-button>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-button size="mini"
+                        type="primary"
+                        v-if="row.code != 'XX' && row.type == 'category'"
+                        @click="showAddMaterialDialog(row)">
+                添加产品
+              </el-button>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>

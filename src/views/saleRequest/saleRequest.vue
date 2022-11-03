@@ -31,28 +31,28 @@
 
       <el-table-column label="序号"
                        align="center"
-                       width="50">
+                       width="60">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
       </el-table-column>
       <el-table-column label="项目编号"
                        align="center"
-                       width="130">
+                       width="150">
         <template slot-scope="{row}">
           <router-link :to="{path:'/project/project', query: { source_id: row.project_no }}">{{row.project_no }}</router-link>
         </template>
       </el-table-column>
       <el-table-column label="客户名称"
                        align="center"
-                       width="120">
+                       width="150">
         <template slot-scope="{row}">
           <span>{{row.customer_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品类型"
                        align="center"
-                       width="80">
+                       width="100">
         <template slot-scope="{row}">
           <span v-for="item in row.product_type_arr"
                 :key="item"
@@ -61,14 +61,13 @@
       </el-table-column>
       <el-table-column label="希望货期"
                        align="center"
-                       width="80">
+                       width="100">
         <template slot-scope="{row}">
           <span>{{row.expect_time }}</span>
         </template>
       </el-table-column>
       <el-table-column label="附件"
-                       align="center"
-                       width="220">
+                       align="center">
         <template slot-scope="{row}">
           <div v-for="item in row.uploads"
                :key="item.name">
@@ -115,20 +114,29 @@
       </el-table-column>
       <el-table-column label="操作"
                        align="center"
+                       width="100"
                        class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini"
+          <el-dropdown><el-button type="primary">操作</el-button>
+          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>
+            <el-button size="mini"
                      type="danger"
                      v-if="row.status == 'open' || row.status=='return' "
                      @click="publish(row)">
             发布
-          </el-button>
-          <el-button size="mini"
+            </el-button>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <el-button size="mini"
                      type="primary"
                      v-if="row.status == 'open' || row.status=='return' "
                      @click="showDialog('update',row)">
             修改
-          </el-button>
+            </el-button>
+          </el-dropdown-item>
+          </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
       <el-table-column label="状态"

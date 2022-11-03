@@ -26,11 +26,12 @@
               fit
               stripe
               highlight-current-row
-              style="width: 100%; max-width: 1600px;">
+              style="width: 100%; max-width: 1600px;"
+              :header-cell-style="{'text-align':'center'}">              
       <el-table-column label="序号"
                        prop="id"
                        align="center"
-                       width="50">
+                       width="60">
         <template slot-scope="{row}">
           <span>{{row.id }}</span>
         </template>
@@ -38,20 +39,20 @@
       <el-table-column label="项目编号"
                        prop="id"
                        align="center"
-                       width="130">
+                       width="150">
         <template slot-scope="{row}">
           <span>{{row.project_no }}</span>
         </template>
       </el-table-column>
       <el-table-column label="项目名称"
-                       width="200"
-                       align="center">
+                       width="500"
+                       align="left">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="客户名"
-                       width="120"
+                       width="150"
                        align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.customer_name }}</span>
@@ -59,7 +60,6 @@
       </el-table-column>
 
       <el-table-column label="需求产品"
-                       width="160"
                        align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.product_name }}</span>
@@ -75,41 +75,54 @@
 
       <el-table-column label="操作"
                        align="center"
+                       width="120"
                        class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <span v-if="row.status =='continue'"
-                style="margin-right:10px">
-            <el-button type="primary"
-                       size="mini"
-                       @click="showDetailDialog(row)">
-              详情
-            </el-button>
-            <el-button type="primary"
-                       size="mini"
-                       @click="showCloseDialog('add',row)">
-              关闭丢单
-            </el-button>
-            <el-button v-if="row.status!='published'"
-                       size="mini"
-                       type="success"
-                       @click="handleModifyStatus(row.id,'finish')">
-              关闭拿单
-            </el-button>
-          </span>
-          <el-button size="mini"
-                     type="info"
-                     @click="showCloseDialog('detail',row)"
-                     v-if="row.status == 'cancel'">
-            丢单原因
-          </el-button>
-          <el-button size="mini"
-                     type="danger"
-                     @click="deleteData(row)">
-            删除
-          </el-button>
+        <template slot-scope="{row}">      
+          <el-dropdown>
+            <el-button type="primary">操作</el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-if="row.status =='continue'">
+                <el-button type="primary"
+                          size="mini"
+                          @click="showDetailDialog(row)">
+                  详情
+                </el-button>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="row.status =='continue'">
+                <el-button type="primary"
+                          size="mini"
+                          @click="showCloseDialog('add',row)">
+                  关闭丢单
+                </el-button>
+              </el-dropdown-item>
+              <el-dropdown-item v-if="row.status =='continue'">
+                <el-button v-if="row.status!='published'"
+                          size="mini"
+                          type="success"
+                          @click="handleModifyStatus(row.id,'finish')">
+                  关闭拿单
+                </el-button>
+              </el-dropdown-item>                
+              <el-dropdown-item>
+                <el-button size="mini"
+                          type="info"
+                          @click="showCloseDialog('detail',row)"
+                          v-if="row.status == 'cancel'">
+                  丢单原因
+                </el-button>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <el-button size="mini"
+                          type="danger"
+                          @click="deleteData(row)">
+                  删除
+                </el-button>
+              </el-dropdown-item>  
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
-
       </el-table-column>
+
       <el-table-column label="状态"
                        width="120"
                        align="center">

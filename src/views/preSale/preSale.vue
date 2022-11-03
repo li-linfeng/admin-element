@@ -27,12 +27,13 @@
               fit
               highlight-current-row
               :span-method="arraySpanMethod"
-              style="width: 100%; max-width: 1600px;">
+              style="width: 100%; max-width: 1600px;"
+              :header-cell-style="{'text-align':'center'}">
       <!-- @selection-change="handleItemsChange" -->
 
       <el-table-column label="序号"
                        align="center"
-                       width="100">
+                       width="90">
         <template slot-scope="{row}">
           <el-radio v-model="selectRow"
                     @change="handleItemsChange"
@@ -43,28 +44,28 @@
       </el-table-column>
       <el-table-column label="项目编号"
                        align="center"
-                       width="130">
+                       width="150">
         <template slot-scope="{row}">
           <router-link :to="{path:'/sale_request/saleRequest', query: { source_id: row.project_no }}">{{row.project_no }}</router-link>
         </template>
       </el-table-column>
       <el-table-column label="客户名称"
                        align="center"
-                       width="120">
+                       width="150">
         <template slot-scope="{row}">
           <span>{{row.customer_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建人"
                        align="center"
-                       width="70">
+                       width="80">
         <template slot-scope="{row}">
           <span>{{row.user_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="处理人"
                        align="center"
-                       width="70">
+                       width="80">
         <template slot-scope="{row}">
           <span>{{row.handler_name}}</span>
         </template>
@@ -79,8 +80,7 @@
       </el-table-column>
 
       <el-table-column label="产品型号"
-                       align="left"
-                       width="400">
+                       align="left">
         <template slot-scope="{row}">
           <span>{{row.product_name }}</span>
         </template>
@@ -96,7 +96,7 @@
 
       <el-table-column label="产品货期"
                        align="center"
-                       width="85">
+                       width="120">
         <template slot-scope="{row}">
           <span>{{row.product_date }}</span>
         </template>
@@ -104,7 +104,7 @@
 
       <el-table-column label="附件"
                        align="center"
-                       width="80">
+                       width="120">
         <template slot-scope="{row}">
           <div v-for="item in row.uploads"
                :key="item.name">
@@ -118,28 +118,38 @@
         </template>
       </el-table-column>
       <el-table-column label="操作"
-                       width="274"
+                       width="120"
                        align="center"
                        class-name="small-padding fixed-width">
         <template slot-scope="{row}">
+          <el-dropdown><el-button type="primary">操作</el-button>
+          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>
           <el-button size="mini"
                      type="info"
                      @click="showTmpDialog(row)"
                      v-if="row.status == 'published'">
             处理
           </el-button>
+          </el-dropdown-item>
+          <el-dropdown-item>
           <el-button size="mini"
                      type="danger"
                      @click="showReturn(row)"
                      v-if="row.status == 'published'">
             退回
           </el-button>
+          </el-dropdown-item>
+          <el-dropdown-item>
           <el-button size="mini"
                      type="success"
                      @click="finishRequest(row.id)"
                      v-if="row.status == 'published'">
             完成
           </el-button>
+          </el-dropdown-item>
+          </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
       <el-table-column label="状态"
@@ -162,7 +172,7 @@
 
     <el-dialog title="新增"
                :visible.sync="preSaleDialogFormVisible"
-               style="width:700px">
+               style="width:100%; margin:auto; overflow-y:hidden; overflow-x:hidden" >
       <el-form ref="dataForm"
                :model="pre_sale_item"
                :rules="tmp_rules"
@@ -239,32 +249,32 @@
                 border
                 stripe
                 fit
-                style="width: 100%; max-width: 1600px;">
+                style="width: 100%; max-width: 1600px;"
+                :header-cell-style="{'text-align':'center'}">
 
         <el-table-column label="产品类型"
                          align="center"
-                         width="187">
+                         width="80">
           <template slot-scope="{row}">
             <span>{{row.category }}</span>
           </template>
         </el-table-column>
         <el-table-column label="产品型号"
-                         align="center"
-                         width="220">
+                         align="left">
           <template slot-scope="{row}">
             <span>{{row.product_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="产品货期"
                          align="center"
-                         width="150">
+                         width="80">
           <template slot-scope="{row}">
             <span>{{row.product_date }}</span>
           </template>
         </el-table-column>
         <el-table-column label="附件"
                          align="center"
-                         width="260">
+                         width="150">
           <template slot-scope="{row}">
             <div v-for="item in row.fileList"
                  :key="item.filename">
@@ -280,7 +290,7 @@
 
         <el-table-column label="操作"
                          align="center"
-                         width="100">
+                         width="80">
           <template slot-scope="{row}">
             <el-button size="mini"
                        type="info"
@@ -460,10 +470,10 @@ export default {
       dialogAction: "update",
       categories: null,
       statusOptions: [
-        {
-          name: "需求变更",
-          key: "change",
-        },
+        // {
+        //   name: "需求变更",
+        //   key: "change",
+        // },
         {
           name: "处理",
           key: "published",
@@ -759,4 +769,7 @@ export default {
   td {
   background-color: #f0f9eb; /*替换为你需要的颜色，觉得优先级不够就加!important*/
 }
+
+
+
 </style>

@@ -10,7 +10,7 @@
             class="text item"
             :key="message.id">{{message.title }} <button size="mini"
                   type="primary"
-                  style="float:right;margin: 0 0 0 10px;font-size:8px"
+                  style="float:right;margin: 0 0 0 10px;font-size:8px; background-color:rgb(222,222,222);border:none; cursor:pointer"
                   @click="showNews(message)">查看</button><span style="float:right;">{{message.created_at}}</span></li>
       </ul>
       <pagination v-show="total>0"
@@ -215,7 +215,15 @@ export default {
   float: left;
   margin-right: 2%;
   margin-bottom: 20px;
-  width: 47%;
+  width: 48%;
+  height: 409px;
+}
+
+.box-card-2 {
+  float: left;
+  margin-right: 0;
+  margin-bottom: 20px;
+  width: 50%;
   height: 409px;
 }
 
@@ -223,7 +231,7 @@ export default {
   float: left;
   margin-right: 2%;
   margin-bottom: 20px;
-  width: 47%;
+  width: 48%;
   height: 409px;
 }
 
